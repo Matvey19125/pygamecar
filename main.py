@@ -1,9 +1,9 @@
 import pygame
-
+import random
 
 pygame.init()
 clock = pygame.time.Clock()
-
+TIMEREVENT = pygame.USEREVENT + 1
 
 class Shoes:
     def __init__(self):
@@ -45,6 +45,7 @@ class Shoes:
         else:
              self.car_x = 350
              self.count = 0
+
     def car_left(self):
         if self.count == 0:
             self.car_x = 100
@@ -53,6 +54,22 @@ class Shoes:
             self.car_x = 350
             self.count = 0
 
+    def money(self):
+        self.sprite_money = pygame.image.load('image/money_image.png')
+        self.prof = random.randint(1, 3)
+        self.money_width = 60
+        self.money_height = 60
+        self.money_y = 60
+        if self.prof == 1:
+            self.money_x = 100
+        elif self.prof == 2:
+            self.money_x = 350
+        elif self.prof == 3:
+            self.money_x = 600
+        self.money_sprite = pygame.transform.scale(self.sprite_image, (self.money_width, self.money_height))
+        while self.money_y != 900:
+            self.money_y += 10
+            self.screen.blit(self.scaled_sprite, (self.money_x, self.money_y))
 
 shoes = Shoes()
 running = True
@@ -62,10 +79,12 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+        if TIMEREVENT % 2 == 0:
+            shoes.money()
         elif keys[pygame.K_d]:
             shoes.car_right()
+            shoes.money()
         elif keys[pygame.K_a]:
             shoes.car_left()
     shoes.draw()
-
 pygame.quit()

@@ -88,3 +88,4 @@ while running:
             shoes.car_left()
     shoes.draw()
 pygame.quit()
+print('Негры')

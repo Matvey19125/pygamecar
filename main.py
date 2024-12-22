@@ -82,4 +82,3 @@ while running:
     shoes.money_y += 10
     shoes.draw()
 pygame.quit()
-print('Негры')

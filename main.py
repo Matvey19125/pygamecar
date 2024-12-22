@@ -69,16 +69,16 @@ shoes = Shoes()
 running = True
 while running:
     clock.tick(60)
-    keys = pygame.key.get_pressed()
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
         elif event.type == TIMEREVENT:
             shoes.spawn_money()
-        elif keys[pygame.K_d]:
-            shoes.car_right()
-        elif keys[pygame.K_a]:
-            shoes.car_left()
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_d:
+                shoes.car_right()
+            elif event.key == pygame.K_a:
+                shoes.car_left()
     shoes.money_y += 10
     shoes.draw()
 pygame.quit()

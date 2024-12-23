@@ -1,10 +1,12 @@
 import pygame
 import random
+import sqlite3
 
 pygame.init()
 clock = pygame.time.Clock()
 TIMEREVENT = pygame.USEREVENT + 1
 pygame.time.set_timer(TIMEREVENT, 15000)
+pygame.display.set_caption("Ретро-Гонки")
 
 class Shoes:
     def __init__(self):
@@ -25,6 +27,20 @@ class Shoes:
         self.car_collider = self.scaled_sprite.get_rect(topleft=(self.car_x, self.car_y))
         self.money_collider = self.money_sprite.get_rect(topleft=(self.money_x, self.money_y))
         self.chet_money = 0
+        self.conn = sqlite3.connect('money.db')
+        self.cursor = self.conn.cursor()
+        self.cursor.execute('''CREATE TABLE IF NOT EXISTS money
+                                      (id INTEGER PRIMARY KEY,
+                                       chet_money INTEGER)''')
+        self.conn.commit()
+        self.cursor.execute("SELECT chet_money FROM money WHERE id = 1")
+        result = self.cursor.fetchone()
+        if result:
+            self.chet_money = result[0]
+        else:
+            self.chet_money = 0
+            self.cursor.execute("INSERT INTO money (id, chet_money) VALUES (1, 0)")
+            self.conn.commit()
 
     def collider(self):
         self.car_collider.topleft = (self.car_x, self.car_y)
@@ -34,6 +50,15 @@ class Shoes:
             self.chet_money = int(self.chet_money)
             self.chet_money += 1
             shoes.money_chet()
+
+    def update_money_db(self, new_value):
+        self.chet_money = new_value
+        self.cursor.execute("UPDATE money SET chet_money = ? WHERE id = 1", (new_value,))
+        self.conn.commit()
+
+    def save_money(self):
+        self.cursor.execute("UPDATE money SET chet_money = ? WHERE id = 1", (self.chet_money,))
+        self.conn.commit()
 
     def money_chet(self):
         self.chet_money = str(self.chet_money)
@@ -100,6 +125,7 @@ while running:
             elif event.key == pygame.K_a:
                 shoes.car_left()
     shoes.money_y += 50
+    shoes.save_money()
     shoes.money_chet()
     shoes.collider()
     shoes.draw()

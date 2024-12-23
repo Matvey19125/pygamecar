@@ -24,12 +24,24 @@ class Shoes:
         self.money_x = random.choice([100, 350, 600])
         self.car_collider = self.scaled_sprite.get_rect(topleft=(self.car_x, self.car_y))
         self.money_collider = self.money_sprite.get_rect(topleft=(self.money_x, self.money_y))
+        self.chet_money = 0
 
     def collider(self):
         self.car_collider.topleft = (self.car_x, self.car_y)
         self.money_collider.topleft = (self.money_x, self.money_y)
         if self.car_collider.colliderect(self.money_collider):
-            print("1")
+            self.money_x = -100
+            self.chet_money = int(self.chet_money)
+            self.chet_money += 1
+            shoes.money_chet()
+
+    def money_chet(self):
+        self.chet_money = str(self.chet_money)
+        self.font = pygame.font.SysFont(None, 80)
+        self.text = self.font.render(self.chet_money, True, (255, 255, 255))
+        self.text_rect = self.text.get_rect(topleft=(60, 40))
+        self.screen.blit(self.text, self.text_rect)
+        pygame.display.update(self.text_rect)
 
     def draw(self):
         self.screen.fill((128, 128, 128))
@@ -70,7 +82,7 @@ class Shoes:
 
     def spawn_money(self):
         self.money_y = 50
-        self.money_x = random.choice([100, 350, 600])
+        self.money_x = random.choice([115, 375, 615])
 
 
 shoes = Shoes()
@@ -87,7 +99,8 @@ while running:
                 shoes.car_right()
             elif event.key == pygame.K_a:
                 shoes.car_left()
-    shoes.money_y += 10
+    shoes.money_y += 50
+    shoes.money_chet()
     shoes.collider()
     shoes.draw()
 pygame.quit()

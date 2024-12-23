@@ -22,6 +22,14 @@ class Shoes:
         self.count = 0
         self.money_y = 50
         self.money_x = random.choice([100, 350, 600])
+        self.car_collider = self.scaled_sprite.get_rect(topleft=(self.car_x, self.car_y))
+        self.money_collider = self.money_sprite.get_rect(topleft=(self.money_x, self.money_y))
+
+    def collider(self):
+        self.car_collider.topleft = (self.car_x, self.car_y)
+        self.money_collider.topleft = (self.money_x, self.money_y)
+        if self.car_collider.colliderect(self.money_collider):
+            print("1")
 
     def draw(self):
         self.screen.fill((128, 128, 128))
@@ -80,5 +88,6 @@ while running:
             elif event.key == pygame.K_a:
                 shoes.car_left()
     shoes.money_y += 10
+    shoes.collider()
     shoes.draw()
 pygame.quit()

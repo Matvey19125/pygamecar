@@ -5,8 +5,11 @@ import sqlite3
 pygame.init()
 clock = pygame.time.Clock()
 TIMEREVENT = pygame.USEREVENT + 1
+timerpot = pygame.USEREVENT + 2
+pygame.time.set_timer(timerpot, 2000)
 pygame.time.set_timer(TIMEREVENT, 15000)
 pygame.display.set_caption("Ретро-Гонки")
+
 
 class Shoes:
     def __init__(self):
@@ -29,9 +32,7 @@ class Shoes:
         self.chet_money = 0
         self.conn = sqlite3.connect('money.db')
         self.cursor = self.conn.cursor()
-        self.cursor.execute('''CREATE TABLE IF NOT EXISTS money
-                                      (id INTEGER PRIMARY KEY,
-                                       chet_money INTEGER)''')
+        self.cursor.execute('''CREATE TABLE IF NOT EXISTS money (id INTEGER PRIMARY KEY, chet_money INTEGER)''')
         self.conn.commit()
         self.cursor.execute("SELECT chet_money FROM money WHERE id = 1")
         result = self.cursor.fetchone()
@@ -41,6 +42,7 @@ class Shoes:
             self.chet_money = 0
             self.cursor.execute("INSERT INTO money (id, chet_money) VALUES (1, 0)")
             self.conn.commit()
+        self.active_streams = []
 
     def collider(self):
         self.car_collider.topleft = (self.car_x, self.car_y)
@@ -51,10 +53,25 @@ class Shoes:
             self.chet_money += 1
             shoes.money_chet()
 
-    def update_money_db(self, new_value):
-        self.chet_money = new_value
-        self.cursor.execute("UPDATE money SET chet_money = ? WHERE id = 1", (new_value,))
-        self.conn.commit()
+    def potok(self):
+        x_potok = random.choice([100, 350, 600])
+        y_potok = 0
+        sprite_potol1 = pygame.image.load("image/potok_car1.png")
+        sprite_potol2 = pygame.image.load("image/potok_car2.png")
+        sprite_potol3 = pygame.image.load("image/potok_car3.png")
+        sprite_potok = [sprite_potol1, sprite_potol2, sprite_potol3]
+        scaled_potok = pygame.transform.scale(random.choice(sprite_potok), (120, 150))
+        scaled_potok = pygame.transform.rotate(scaled_potok, 180)
+        stream = {'x': x_potok, 'y': y_potok, 'scaled_potok': scaled_potok}
+        self.active_streams.append(stream)
+
+    def pot_dvish(self):
+        for stream in self.active_streams:
+            stream['y'] += 60
+            if stream['y'] > 950:
+                self.active_streams.remove(stream)
+            else:
+                self.screen.blit(stream['scaled_potok'], (stream['x'], stream['y']))
 
     def save_money(self):
         self.cursor.execute("UPDATE money SET chet_money = ? WHERE id = 1", (self.chet_money,))
@@ -62,11 +79,11 @@ class Shoes:
 
     def money_chet(self):
         self.chet_money = str(self.chet_money)
-        self.font = pygame.font.SysFont(None, 80)
-        self.text = self.font.render(self.chet_money, True, (255, 255, 255))
-        self.text_rect = self.text.get_rect(topleft=(60, 40))
-        self.screen.blit(self.text, self.text_rect)
-        pygame.display.update(self.text_rect)
+        font = pygame.font.SysFont(None, 80)
+        text = font.render(self.chet_money, True, (255, 255, 255))
+        text_rect = text.get_rect(topleft=(60, 40))
+        self.screen.blit(text, text_rect)
+        pygame.display.flip()
 
     def draw(self):
         self.screen.fill((128, 128, 128))
@@ -94,8 +111,8 @@ class Shoes:
             self.car_x = 600
             self.count += 1
         else:
-             self.car_x = 350
-             self.count = 0
+            self.car_x = 350
+            self.count = 0
 
     def car_left(self):
         if self.count == 0:
@@ -119,11 +136,15 @@ while running:
             running = False
         elif event.type == TIMEREVENT:
             shoes.spawn_money()
+        elif event.type == timerpot:
+            shoes.potok()
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_d:
                 shoes.car_right()
             elif event.key == pygame.K_a:
                 shoes.car_left()
+
+    shoes.pot_dvish()
     shoes.money_y += 50
     shoes.save_money()
     shoes.money_chet()

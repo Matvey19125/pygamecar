@@ -43,6 +43,7 @@ class Shoes:
             self.cursor.execute("INSERT INTO money (id, chet_money) VALUES (1, 0)")
             self.conn.commit()
         self.active_streams = []
+        self.speed = 60
 
     def collider(self):
         self.car_collider.topleft = (self.car_x, self.car_y)
@@ -67,7 +68,7 @@ class Shoes:
 
     def pot_dvish(self):
         for stream in self.active_streams:
-            stream['y'] += 60
+            stream['y'] += self.speed
             if stream['y'] > 950:
                 self.active_streams.remove(stream)
             else:
@@ -104,7 +105,6 @@ class Shoes:
             count -= 55
         self.screen.blit(self.scaled_sprite, (self.car_x, self.car_y))
         self.screen.blit(self.money_sprite, (self.money_x, self.money_y))
-        pygame.display.flip()
 
     def car_right(self):
         if self.count == 0:
@@ -143,7 +143,10 @@ while running:
                 shoes.car_right()
             elif event.key == pygame.K_a:
                 shoes.car_left()
-
+            elif event.key == pygame.K_s:
+                shoes.speed -= 20
+                if shoes.speed < 1:
+                    shoes.speed = 1
     shoes.pot_dvish()
     shoes.money_y += 50
     shoes.save_money()

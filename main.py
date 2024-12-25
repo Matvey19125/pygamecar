@@ -138,6 +138,13 @@ while running:
             shoes.spawn_money()
         elif event.type == timerpot:
             shoes.potok()
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_s]:
+            shoes.speed -= 5
+            if shoes.speed < 1:
+                shoes.speed = 1
+        else:
+            shoes.speed = 60
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_d:
                 shoes.car_right()

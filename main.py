@@ -141,8 +141,12 @@ while running:
         keys = pygame.key.get_pressed()
         if keys[pygame.K_s]:
             shoes.speed -= 5
-            if shoes.speed < 1:
-                shoes.speed = 1
+            if shoes.speed < 10:
+                shoes.speed = 10
+        elif keys[pygame.K_w]:
+            shoes.speed += 5
+            if shoes.speed > 90:
+                shoes.speed = 90
         else:
             shoes.speed = 60
         if event.type == pygame.KEYDOWN:

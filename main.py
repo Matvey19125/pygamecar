@@ -9,7 +9,7 @@ timerpot = pygame.USEREVENT + 2
 pygame.time.set_timer(timerpot, 2000)
 pygame.time.set_timer(TIMEREVENT, 15000)
 pygame.display.set_caption("Ретро-Гонки")
-
+count_stolk = 0
 
 class Shoes:
     def __init__(self):
@@ -45,7 +45,8 @@ class Shoes:
         self.active_streams = []
         self.speed = 60
 
-    def collider(self):
+
+    def collider_money(self):
         self.car_collider.topleft = (self.car_x, self.car_y)
         self.money_collider.topleft = (self.money_x, self.money_y)
         if self.car_collider.colliderect(self.money_collider):
@@ -54,16 +55,29 @@ class Shoes:
             self.chet_money += 1
             shoes.money_chet()
 
+    def collider_potok(self):
+        global count_stolk
+        self.car_collider.topleft = (self.car_x, self.car_y)
+        self.count_stolk = 0
+        for stream in self.active_streams:
+            stream['collider'].topleft = (stream['x'], stream['y'])
+            if self.car_collider.colliderect(stream['collider']):
+                count_stolk += 1
+            if count_stolk >= 1:
+                self.screen.fill((0, 0, 0))
+                shoes.lose_scene()
+
     def potok(self):
-        x_potok = random.choice([100, 350, 600])
-        y_potok = 0
+        self.x_potok = random.choice([100, 350, 600])
+        self.y_potok = 0
         sprite_potol1 = pygame.image.load("image/potok_car1.png")
         sprite_potol2 = pygame.image.load("image/potok_car2.png")
         sprite_potol3 = pygame.image.load("image/potok_car3.png")
         sprite_potok = [sprite_potol1, sprite_potol2, sprite_potol3]
         scaled_potok = pygame.transform.scale(random.choice(sprite_potok), (120, 150))
         scaled_potok = pygame.transform.rotate(scaled_potok, 180)
-        stream = {'x': x_potok, 'y': y_potok, 'scaled_potok': scaled_potok}
+        potok_collider = scaled_potok.get_rect(topleft=(self.x_potok, self.y_potok))
+        stream = {'x': self.x_potok, 'y': self.y_potok, 'scaled_potok': scaled_potok, 'collider': potok_collider}
         self.active_streams.append(stream)
 
     def pot_dvish(self):
@@ -72,6 +86,7 @@ class Shoes:
             if stream['y'] > 950:
                 self.active_streams.remove(stream)
             else:
+                stream['collider'].topleft = (stream['x'], stream['y'])
                 self.screen.blit(stream['scaled_potok'], (stream['x'], stream['y']))
 
     def save_money(self):
@@ -79,12 +94,14 @@ class Shoes:
         self.conn.commit()
 
     def money_chet(self):
+        global count_stolk
         self.chet_money = str(self.chet_money)
         font = pygame.font.SysFont(None, 80)
         text = font.render(self.chet_money, True, (255, 255, 255))
         text_rect = text.get_rect(topleft=(60, 40))
         self.screen.blit(text, text_rect)
         pygame.display.flip()
+
 
     def draw(self):
         self.screen.fill((128, 128, 128))
@@ -126,6 +143,14 @@ class Shoes:
         self.money_y = 50
         self.money_x = random.choice([115, 375, 615])
 
+    def lose_scene(self):
+        self.screen.fill((0, 0, 0))
+        font = pygame.font.Font(None, 72)
+        text = font.render("Вы проиграли!", True, (255, 255, 255))
+        text_rect = text.get_rect(center=(400, 475))
+        self.screen.blit(text, text_rect)
+        pygame.display.flip()
+        pygame.time.delay(3000)
 
 shoes = Shoes()
 running = True
@@ -139,7 +164,7 @@ while running:
         elif event.type == timerpot:
             shoes.potok()
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_s]:
+        if keys[pygame.K_s] and count_stolk == 0:
             shoes.speed -= 5
             if shoes.speed < 10:
                 shoes.speed = 10
@@ -161,7 +186,8 @@ while running:
     shoes.pot_dvish()
     shoes.money_y += 50
     shoes.save_money()
+    shoes.collider_potok()
     shoes.money_chet()
-    shoes.collider()
+    shoes.collider_money()
     shoes.draw()
 pygame.quit()

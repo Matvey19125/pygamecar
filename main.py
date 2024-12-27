@@ -45,8 +45,8 @@ class Shoes:
         self.active_streams = []
         self.speed = 60
 
-
     def collider_money(self):
+        self.money_y += self.speed
         self.car_collider.topleft = (self.car_x, self.car_y)
         self.money_collider.topleft = (self.money_x, self.money_y)
         if self.car_collider.colliderect(self.money_collider):
@@ -73,7 +73,10 @@ class Shoes:
         sprite_potol1 = pygame.image.load("image/potok_car1.png")
         sprite_potol2 = pygame.image.load("image/potok_car2.png")
         sprite_potol3 = pygame.image.load("image/potok_car3.png")
-        sprite_potok = [sprite_potol1, sprite_potol2, sprite_potol3]
+        sprite_potol4 = pygame.image.load("image/potok_car4.png")
+        sprite_potol5 = pygame.image.load("image/potok_car5.png")
+        sprite_potol6 = pygame.image.load("image/potok_car6.png")
+        sprite_potok = [sprite_potol1, sprite_potol2, sprite_potol3, sprite_potol4, sprite_potol5, sprite_potol6]
         scaled_potok = pygame.transform.scale(random.choice(sprite_potok), (120, 150))
         scaled_potok = pygame.transform.rotate(scaled_potok, 180)
         potok_collider = scaled_potok.get_rect(topleft=(self.x_potok, self.y_potok))
@@ -150,7 +153,7 @@ class Shoes:
         text_rect = text.get_rect(center=(400, 475))
         self.screen.blit(text, text_rect)
         pygame.display.flip()
-        pygame.time.delay(3000)
+        pygame.time.delay(30000000)
 
 shoes = Shoes()
 running = True
@@ -184,7 +187,6 @@ while running:
                 if shoes.speed < 1:
                     shoes.speed = 1
     shoes.pot_dvish()
-    shoes.money_y += 50
     shoes.save_money()
     shoes.collider_potok()
     shoes.money_chet()

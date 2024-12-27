@@ -3,7 +3,6 @@ import random
 import sqlite3
 import pygame_widgets
 from pygame_widgets.button import Button
-
 pygame.init()
 clock = pygame.time.Clock()
 TIMEREVENT = pygame.USEREVENT + 1
@@ -16,6 +15,8 @@ count_stolk = 0
 
 class Shoes:
     def __init__(self):
+        global count_stolk
+        count_stolk = 0
         self.size = self.width, self.height = 800, 950
         self.screen = pygame.display.set_mode(self.size)
         self.colors = [(0, 0, 0), (255, 255, 255), (255, 0, 0)]
@@ -155,38 +156,21 @@ class Shoes:
         while running:
             self.screen.fill((0, 0, 0))
             font = pygame.font.Font(None, 72)
-            text = font.render("Вы проиграли!", True, (255, 255, 255))
+            text = font.render("Вы проиграли! Нажмите Enter для перезагрузки", True, (255, 255, 255))
             text_rect = text.get_rect(center=(400, 475))
             self.screen.blit(text, text_rect)
-
-            button = Button(
-                self.screen,
-                300,
-                600,
-                200,
-                150,
-                text='Начать заново!',
-                fontSize=20,
-                margin=10,
-                inactiveColour=(220, 220, 220),
-                pressedColour=(180, 180, 180),
-                radius=15,
-                onClick=self.on_click
-            )
 
             events = pygame.event.get()
             for event in events:
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     return
-
-            button.listen(events)
-            button.draw()
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_RETURN:
+                        self.__init__()
+                        return
             pygame.display.flip()
             pygame.time.delay(100)
-
-    def on_click(self):
-        print(1)
 
 
 shoes = Shoes()
@@ -220,6 +204,8 @@ while running:
                 shoes.speed -= 20
                 if shoes.speed < 1:
                     shoes.speed = 1
+    if not running:
+        break
     shoes.pot_dvish()
     shoes.save_money()
     shoes.collider_potok()

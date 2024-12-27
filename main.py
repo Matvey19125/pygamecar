@@ -1,6 +1,8 @@
 import pygame
 import random
 import sqlite3
+import pygame_widgets
+from pygame_widgets.button import Button
 
 pygame.init()
 clock = pygame.time.Clock()
@@ -10,6 +12,7 @@ pygame.time.set_timer(timerpot, 2000)
 pygame.time.set_timer(TIMEREVENT, 15000)
 pygame.display.set_caption("Ретро-Гонки")
 count_stolk = 0
+
 
 class Shoes:
     def __init__(self):
@@ -99,6 +102,7 @@ class Shoes:
     def money_chet(self):
         global count_stolk
         self.chet_money = str(self.chet_money)
+        pygame.font.init()
         font = pygame.font.SysFont(None, 80)
         text = font.render(self.chet_money, True, (255, 255, 255))
         text_rect = text.get_rect(topleft=(60, 40))
@@ -147,13 +151,43 @@ class Shoes:
         self.money_x = random.choice([115, 375, 615])
 
     def lose_scene(self):
-        self.screen.fill((0, 0, 0))
-        font = pygame.font.Font(None, 72)
-        text = font.render("Вы проиграли!", True, (255, 255, 255))
-        text_rect = text.get_rect(center=(400, 475))
-        self.screen.blit(text, text_rect)
-        pygame.display.flip()
-        pygame.time.delay(30000000)
+        running = True
+        while running:
+            self.screen.fill((0, 0, 0))
+            font = pygame.font.Font(None, 72)
+            text = font.render("Вы проиграли!", True, (255, 255, 255))
+            text_rect = text.get_rect(center=(400, 475))
+            self.screen.blit(text, text_rect)
+
+            button = Button(
+                self.screen,
+                300,
+                600,
+                200,
+                150,
+                text='Начать заново!',
+                fontSize=20,
+                margin=10,
+                inactiveColour=(220, 220, 220),
+                pressedColour=(180, 180, 180),
+                radius=15,
+                onClick=self.on_click
+            )
+
+            events = pygame.event.get()
+            for event in events:
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    return
+
+            button.listen(events)
+            button.draw()
+            pygame.display.flip()
+            pygame.time.delay(100)
+
+    def on_click(self):
+        print(1)
+
 
 shoes = Shoes()
 running = True

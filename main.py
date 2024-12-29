@@ -155,7 +155,7 @@ class Shoes:
         running = True
         while running:
             self.screen.fill((0, 0, 0))
-            font = pygame.font.Font(None, 72)
+            font = pygame.font.Font(None, 40)
             text = font.render("Вы проиграли! Нажмите Enter для перезагрузки", True, (255, 255, 255))
             text_rect = text.get_rect(center=(400, 475))
             self.screen.blit(text, text_rect)

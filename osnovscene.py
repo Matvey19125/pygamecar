@@ -1,8 +1,10 @@
 import pygame
 import random
 import sqlite3
+import os
 import pygame_widgets
 from pygame_widgets.button import Button
+from shop import OtherClass
 pygame.init()
 clock = pygame.time.Clock()
 TIMEREVENT = pygame.USEREVENT + 1
@@ -110,7 +112,6 @@ class Shoes:
         self.screen.blit(text, text_rect)
         pygame.display.flip()
 
-
     def draw(self):
         self.screen.fill((128, 128, 128))
         rect_x = 55
@@ -159,7 +160,6 @@ class Shoes:
             text = font.render("Вы проиграли! Нажмите Enter для перезагрузки", True, (255, 255, 255))
             text_rect = text.get_rect(center=(400, 475))
             self.screen.blit(text, text_rect)
-
             events = pygame.event.get()
             for event in events:
                 if event.type == pygame.QUIT:
@@ -169,6 +169,11 @@ class Shoes:
                     if event.key == pygame.K_RETURN:
                         self.__init__()
                         return
+                    elif event.key == pygame.K_q:
+                        other_instance = OtherClass()
+                        other_instance.run()
+                        return
+
             pygame.display.flip()
             pygame.time.delay(100)
 

@@ -2,6 +2,7 @@ import pygame
 import random
 import sqlite3
 import os
+import pygame_gui
 import pygame_widgets
 from pygame_widgets.button import Button
 from shop import OtherClass
@@ -154,28 +155,30 @@ class Shoes:
 
     def lose_scene(self):
         running = True
+        clock = pygame.time.Clock()
+        manager = pygame_gui.UIManager((800, 600))
+        restart_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((300, 450), (200, 150)),
+                                                      text='Заново',
+                                                      manager=manager)
         while running:
+            time_delta = clock.tick(60) / 1000.0
             self.screen.fill((0, 0, 0))
-            font = pygame.font.Font(None, 40)
-            text = font.render("Вы проиграли! Нажмите Enter для перезагрузки", True, (255, 255, 255))
-            text_rect = text.get_rect(center=(400, 475))
+            font = pygame.font.Font(None, 35)
+            text = font.render("Вы проиграли! Нажмите кнопку 'Заново' для перезагрузки", True, (255, 255, 255))
+            text_rect = text.get_rect(center=(400, 250))
             self.screen.blit(text, text_rect)
-            events = pygame.event.get()
-            for event in events:
+            for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     return
-                elif event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_RETURN:
+                if event.type == pygame_gui.UI_BUTTON_PRESSED:
+                    if event.ui_element == restart_button:
                         self.__init__()
                         return
-                    elif event.key == pygame.K_q:
-                        other_instance = OtherClass()
-                        other_instance.run()
-                        return
-
-            pygame.display.flip()
-            pygame.time.delay(100)
+                manager.process_events(event)
+            manager.update(time_delta)
+            manager.draw_ui(self.screen)
+            pygame.display.update()
 
 
 shoes = Shoes()

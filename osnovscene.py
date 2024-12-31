@@ -3,9 +3,6 @@ import random
 import sqlite3
 import os
 import pygame_gui
-import pygame_widgets
-from pygame_widgets.button import Button
-from shop import OtherClass
 pygame.init()
 clock = pygame.time.Clock()
 TIMEREVENT = pygame.USEREVENT + 1
@@ -60,7 +57,7 @@ class Shoes:
             self.money_x = -100
             self.chet_money = int(self.chet_money)
             self.chet_money += 1
-            shoes.money_chet()
+            self.money_chet()
 
     def collider_potok(self):
         global count_stolk
@@ -72,7 +69,7 @@ class Shoes:
                 count_stolk += 1
             if count_stolk >= 1:
                 self.screen.fill((0, 0, 0))
-                shoes.lose_scene()
+                self.lose_scene()
 
     def potok(self):
         self.x_potok = random.choice([100, 350, 600])
@@ -103,6 +100,15 @@ class Shoes:
         self.cursor.execute("UPDATE money SET chet_money = ? WHERE id = 1", (self.chet_money,))
         self.conn.commit()
 
+    def update(self):
+        self.collider_money()
+        self.pot_dvish()
+        self.save_money()
+        self.money_chet()
+        self.draw()
+        cycle()
+
+
     def money_chet(self):
         global count_stolk
         self.chet_money = str(self.chet_money)
@@ -132,6 +138,7 @@ class Shoes:
             count -= 55
         self.screen.blit(self.scaled_sprite, (self.car_x, self.car_y))
         self.screen.blit(self.money_sprite, (self.money_x, self.money_y))
+
 
     def car_right(self):
         if self.count == 0:
@@ -164,7 +171,7 @@ class Shoes:
             time_delta = clock.tick(60) / 1000.0
             self.screen.fill((0, 0, 0))
             font = pygame.font.Font(None, 35)
-            text = font.render("Вы проиграли! Нажмите кнопку 'Заново' для перезагрузки", True, (255, 255, 255))
+            text = font.render("Вы врезались! Нажмите кнопку 'Заново' для перезагрузки", True, (255, 255, 255))
             text_rect = text.get_rect(center=(400, 250))
             self.screen.blit(text, text_rect)
             for event in pygame.event.get():
@@ -181,43 +188,49 @@ class Shoes:
             pygame.display.update()
 
 
-shoes = Shoes()
-running = True
-while running:
-    clock.tick(60)
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-        elif event.type == TIMEREVENT:
-            shoes.spawn_money()
-        elif event.type == timerpot:
-            shoes.potok()
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_s] and count_stolk == 0:
-            shoes.speed -= 5
-            if shoes.speed < 10:
-                shoes.speed = 10
-        elif keys[pygame.K_w]:
-            shoes.speed += 5
-            if shoes.speed > 90:
-                shoes.speed = 90
-        else:
-            shoes.speed = 60
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_d:
-                shoes.car_right()
-            elif event.key == pygame.K_a:
-                shoes.car_left()
-            elif event.key == pygame.K_s:
-                shoes.speed -= 20
-                if shoes.speed < 1:
-                    shoes.speed = 1
-    if not running:
-        break
-    shoes.pot_dvish()
-    shoes.save_money()
-    shoes.collider_potok()
-    shoes.money_chet()
-    shoes.collider_money()
-    shoes.draw()
-pygame.quit()
+def cycle():
+    shoes = Shoes()
+    running = True
+    clock = pygame.time.Clock()
+    while running:
+        clock.tick(60)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            elif event.type == TIMEREVENT:
+                shoes.spawn_money()
+            elif event.type == timerpot:
+                shoes.potok()
+            keys = pygame.key.get_pressed()
+            if keys[pygame.K_s] and count_stolk == 0:
+                shoes.speed -= 5
+                if shoes.speed < 10:
+                    shoes.speed = 10
+            elif keys[pygame.K_w]:
+                shoes.speed += 5
+                if shoes.speed > 90:
+                    shoes.speed = 90
+            else:
+                shoes.speed = 60
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_d:
+                    shoes.car_right()
+                elif event.key == pygame.K_a:
+                    shoes.car_left()
+                elif event.key == pygame.K_s:
+                    shoes.speed -= 20
+                    if shoes.speed < 1:
+                        shoes.speed = 1
+        if not running:
+            break
+        shoes.pot_dvish()
+        shoes.save_money()
+        shoes.collider_potok()
+        shoes.money_chet()
+        shoes.collider_money()
+        shoes.draw()
+    pygame.quit()
+
+
+if __name__ == "__main__":
+    cycle()

@@ -1,7 +1,6 @@
 import pygame
 import random
 import sqlite3
-import os
 import pygame_gui
 pygame.init()
 clock = pygame.time.Clock()
@@ -215,6 +214,8 @@ def cycle():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_d:
                     shoes.car_right()
+                if event.key == pygame.K_ESCAPE:
+                    pygame.quit()
                 elif event.key == pygame.K_a:
                     shoes.car_left()
                 elif event.key == pygame.K_s:

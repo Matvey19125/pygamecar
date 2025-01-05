@@ -11,7 +11,6 @@ pygame.time.set_timer(TIMEREVENT, 15000)
 pygame.display.set_caption("Ретро-Гонки")
 count_stolk = 0
 
-
 class Shoes:
     def __init__(self):
         global count_stolk
@@ -23,7 +22,13 @@ class Shoes:
         self.car_y = 800
         self.car_width = 120
         self.car_height = 150
-        self.sprite_image = pygame.image.load('image/one_car_image.png')
+        self.conn = sqlite3.connect('vibr.db')
+        self.cursor = self.conn.cursor()
+        self.cursor.execute("SELECT count_vibr FROM vibr")
+        result = self.cursor.fetchone()
+        self.count_vibr = result[0]
+        self.scrin_car = [('image/one_car_image.png'), ('image/sprite_one.png'), ('image/two_car.png'), ('image/three_car.png'), ('image/four_car.png')]
+        self.sprite_image = pygame.image.load(self.scrin_car[self.count_vibr])
         self.money_sprite = pygame.image.load('image/money_image.png')
         self.scaled_sprite = pygame.transform.scale(self.sprite_image, (self.car_width, self.car_height))
         self.money_sprite = pygame.transform.scale(self.money_sprite, (70, 70))
@@ -163,9 +168,12 @@ class Shoes:
         running = True
         clock = pygame.time.Clock()
         manager = pygame_gui.UIManager((800, 600))
-        restart_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((300, 450), (200, 150)),
+        restart_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((150, 450), (200, 150)),
                                                       text='Заново',
                                                       manager=manager)
+        menu_exit = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((450, 450), (200, 150)),
+                                                 text='Выход',
+                                                 manager=manager)
         while running:
             time_delta = clock.tick(60) / 1000.0
             self.screen.fill((0, 0, 0))
@@ -181,10 +189,15 @@ class Shoes:
                     if event.ui_element == restart_button:
                         self.__init__()
                         return
+                    if event.ui_element == menu_exit:
+                        from Menu import menu
+                        scene = menu()
+                        scene.menu()
                 manager.process_events(event)
             manager.update(time_delta)
             manager.draw_ui(self.screen)
             pygame.display.update()
+
 
 
 def cycle():

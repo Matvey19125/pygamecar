@@ -6,7 +6,7 @@ pygame.init()
 clock = pygame.time.Clock()
 TIMEREVENT = pygame.USEREVENT + 1
 timerpot = pygame.USEREVENT + 2
-pygame.time.set_timer(timerpot, 2000)
+pygame.time.set_timer(timerpot, 1500)
 pygame.time.set_timer(TIMEREVENT, 15000)
 pygame.display.set_caption("Ретро-Гонки")
 count_stolk = 0
@@ -199,7 +199,6 @@ class Shoes:
             pygame.display.update()
 
 
-
 def cycle():
     shoes = Shoes()
     running = True
@@ -219,7 +218,21 @@ def cycle():
                 if shoes.speed < 10:
                     shoes.speed = 10
             elif keys[pygame.K_w]:
-                shoes.speed += 5
+                if shoes.count_vibr == 0:
+                    shoes.speed += 5
+                    print(shoes.speed)
+                if shoes.count_vibr == 1:
+                    shoes.speed += 8
+                    print(shoes.speed)
+                if shoes.count_vibr == 2:
+                    shoes.speed += 12
+                    print(shoes.speed)
+                if shoes.count_vibr == 3:
+                    shoes.speed += 15
+                    print(shoes.speed)
+                if shoes.count_vibr == 4:
+                    shoes.speed += 20
+                    print(shoes.speed)
                 if shoes.speed > 90:
                     shoes.speed = 90
             else:

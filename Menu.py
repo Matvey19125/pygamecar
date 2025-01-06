@@ -33,7 +33,6 @@ def menu():
     mouse_pos = pygame.mouse.get_pos()
     clock = pygame.time.Clock()
     running = True
-
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:

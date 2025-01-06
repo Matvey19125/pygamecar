@@ -13,6 +13,7 @@ def shop():
     background = pygame.transform.scale(background, (screen.get_width(), screen.get_height()))
     font = pygame.font.Font(None, 55)
     font_money = pygame.font.Font(None, 74)
+    fontbig = pygame.font.Font(None, 60)
     conn_money = sqlite3.connect('money.db')
     cursor_money = conn_money.cursor()
     cursor_money.execute("CREATE TABLE IF NOT EXISTS money (id INTEGER PRIMARY KEY, chet_money INTEGER)")
@@ -84,6 +85,7 @@ def shop():
     four_sprite_car_rect = four_sprite_car.get_rect(center=(835, 800))
     four_car_image = pygame.image.load("image/four_car.png")
     four_car_image = pygame.transform.scale(four_car_image, new_size)
+    mouse_pos = pygame.mouse.get_pos()
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -214,6 +216,32 @@ def shop():
             if count_vibr != 4 and count_four_sprite == 1:
                 text5 = "Выбрать"
                 four_sprite_car = font.render(text5, True, (255, 255, 255))
+            if baza_sprite_rect.collidepoint(mouse_pos):
+                baza_sprite = fontbig.render(text2, True, (255, 0, 0))
+            else:
+                baza_sprite = font.render(text2, True, (255, 255, 255))
+            if two_sprite_car_rect.collidepoint(mouse_pos):
+                two_sprite_car = fontbig.render(text3, True, (255, 0, 0))
+            else:
+                two_sprite_car = font.render(text3, True, (255, 255, 255))
+            if one_sprite_rect.collidepoint(mouse_pos):
+                fon = pygame.font.Font(None, 60)
+                one_sprite = fon.render(text1, True, (255, 0, 0))
+            else:
+                one_sprite = font.render(text1, True, (255, 255, 255))
+            if three_sprite_car_rect.collidepoint(mouse_pos):
+                three_sprite_car = fontbig.render(text4, True, (255, 0, 0))
+            else:
+                three_sprite_car = font.render(text4, True, (255, 255, 255))
+            if four_sprite_car_rect.collidepoint(mouse_pos):
+                four_sprite_car = fontbig.render(text5, True, (255, 0, 0))
+            else:
+                four_sprite_car = font.render(text5, True, (255, 255, 255))
+            if exit_button_rect.collidepoint(mouse_pos):
+                fonexit = pygame.font.Font(None, 80)
+                exit_button = fonexit.render(text_exit_button, True, (255, 0, 0))
+            else:
+                exit_button = font_money.render(text_exit_button, True, (255, 255, 255))
         screen.blit(background, (0, 0))
         screen.blit(one_sprite, one_sprite_rect)
         screen.blit(one_car_image, (100, 200))

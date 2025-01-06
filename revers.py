@@ -7,11 +7,11 @@ clock = pygame.time.Clock()
 TIMEREVENT = pygame.USEREVENT + 1
 timerpot = pygame.USEREVENT + 2
 pygame.time.set_timer(timerpot, 1250)
-pygame.time.set_timer(TIMEREVENT, 15000)
+pygame.time.set_timer(TIMEREVENT, 5000)
 pygame.display.set_caption("Ретро-Гонки")
 count_stolk = 0
 
-class Shoes:
+class Rervers:
     def __init__(self):
         global count_stolk
         count_stolk = 0
@@ -30,6 +30,7 @@ class Shoes:
         self.scrin_car = [('image/one_car_image.png'), ('image/sprite_one.png'), ('image/two_car.png'), ('image/three_car.png'), ('image/four_car.png')]
         self.sprite_image = pygame.image.load(self.scrin_car[self.count_vibr])
         self.money_sprite = pygame.image.load('image/money_image.png')
+        self.sprite_image = pygame.transform.rotate(self.sprite_image, 180)
         self.scaled_sprite = pygame.transform.scale(self.sprite_image, (self.car_width, self.car_height))
         self.money_sprite = pygame.transform.scale(self.money_sprite, (70, 70))
         self.count = 0
@@ -200,7 +201,7 @@ class Shoes:
 
 
 def cycle():
-    shoes = Shoes()
+    shoes = Rervers()
     running = True
     clock = pygame.time.Clock()
     while running:
@@ -235,11 +236,11 @@ def cycle():
                 shoes.speed = 60
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_d:
-                    shoes.car_right()
+                    shoes.car_left()
                 if event.key == pygame.K_ESCAPE:
                     pygame.quit()
                 elif event.key == pygame.K_a:
-                    shoes.car_left()
+                    shoes.car_right()
                 elif event.key == pygame.K_s:
                     shoes.speed -= 20
                     if shoes.speed < 1:

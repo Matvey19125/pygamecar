@@ -1,6 +1,6 @@
 import pygame
 import sys
-from osnovscene import Shoes
+from razvil import razvil
 from shop import shop
 
 
@@ -46,8 +46,8 @@ def menu():
                     sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if play_button_rect.collidepoint(event.pos):
-                    shoes_scene = Shoes()
-                    shoes_scene.update()
+                    shoes_scene = razvil()
+                    shoes_scene.razvil()
                     running = False
                 elif shop_button_rect.collidepoint(event.pos):
                     scene = shop()

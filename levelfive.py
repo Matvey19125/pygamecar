@@ -46,42 +46,45 @@ def park():
     car_collider = scaled_sprite.get_rect(topleft=(car_x, car_y))
     money_image = pygame.image.load('image/money_image.png')
     money_scaled = pygame.transform.scale(money_image, (80, 80))
-    money_collider = pygame.Rect(635, 100, 60, 60)
+    money_collider = pygame.Rect((665, 600, 60, 60))
+    money_image2 = pygame.image.load('image/money_image.png')
+    money_scaled2 = pygame.transform.scale(money_image2, (80, 80))
+    money_collider2 = pygame.Rect((665, 50, 60, 60))
     tochka_win = pygame.image.load("image/win.png")
     tochka_win_scaled = pygame.transform.scale(tochka_win, (20, 20))
-    tochka_win_collider = pygame.Rect(370, 600, 20, 20)
+    tochka_win_collider = pygame.Rect((50, 575, 30, 30))
     parcing_image = pygame.image.load('image/parcing.png')
     parcing_scaled = pygame.transform.scale(parcing_image, (60, 90))
-    parcing_collider = pygame.Rect(335, 555, 20, 20)
+    parcing_collider = pygame.Rect((50, 580, 80, 80))
     nps_car = ['image/potok_car1.png', 'image/potok_car2.png', 'image/potok_car3.png', 'image/potok_car4.png', 'image/potok_car5.png', 'image/potok_car6.png']
     nps_one_sprite = pygame.image.load(nps_car[random.randrange(0, 6)])
     nps_one_scaled = pygame.transform.scale(nps_one_sprite, (car_width, car_height))
-    nps_one_collider = nps_one_scaled.get_rect(topleft=(400, 400))
+    nps_one_collider = nps_one_scaled.get_rect(topleft=(35, 400))
     nps_two_sprite = pygame.image.load(nps_car[random.randrange(0, 6)])
     nps_two_scaled = pygame.transform.scale(nps_two_sprite, (car_width, car_height))
-    nps_two_collider = nps_two_scaled.get_rect(topleft=(400, 535))
+    nps_two_collider = nps_two_scaled.get_rect(topleft=(200, 535))
     nps_three_sprite = pygame.image.load(nps_car[random.randrange(0, 6)])
     nps_three_scaled = pygame.transform.scale(nps_three_sprite, (car_width, car_height))
-    nps_three_collider = nps_three_scaled.get_rect(topleft=(400, 670))
+    nps_three_collider = nps_three_scaled.get_rect(topleft=(550, 570))
     nps_four_sprite = pygame.image.load(nps_car[random.randrange(0, 6)])
     nps_four_scaled = pygame.transform.scale(nps_four_sprite, (car_width, car_height))
-    nps_four_collider = nps_four_scaled.get_rect(topleft=(305, 670))
+    nps_four_collider = nps_four_scaled.get_rect(topleft=(150, 670))
     nps_five_sprite = pygame.image.load(nps_car[random.randrange(0, 6)])
     nps_five_scaled = pygame.transform.scale(nps_five_sprite, (car_width, car_height))
     nps_five_collider = nps_five_scaled.get_rect(topleft=(305, 400))
     nps_six_sprite = pygame.image.load(nps_car[random.randrange(0, 6)])
     nps_six_scaled = pygame.transform.scale(nps_six_sprite, (car_width, car_height))
-    nps_six_collider = nps_six_scaled.get_rect(topleft=(60, 490))
+    nps_six_collider = nps_six_scaled.get_rect(topleft=(700, 300))
     nps_seven_sprite = pygame.image.load(nps_car[random.randrange(0, 6)])
     nps_seven_sprite = pygame.transform.rotate(nps_seven_sprite, 90)
     nps_seven_scaled = pygame.transform.scale(nps_seven_sprite, (car_height, car_width))
-    nps_seven_collider = nps_seven_scaled.get_rect(topleft=(150, 700))
+    nps_seven_collider = nps_seven_scaled.get_rect(topleft=(450, 100))
     nps_eith_sprite = pygame.image.load(nps_car[random.randrange(0, 6)])
     nps_eith_scaled = pygame.transform.scale(nps_eith_sprite, (car_width, car_height))
-    nps_eith_collider = nps_eith_scaled.get_rect(topleft=(500, 50))
+    nps_eith_collider = nps_eith_scaled.get_rect(topleft=(300, 50))
     nps_nine_sprite = pygame.image.load(nps_car[random.randrange(0, 6)])
     nps_nine_scaled = pygame.transform.scale(nps_nine_sprite, (car_width, car_height))
-    nps_nine_collider = nps_nine_scaled.get_rect(topleft=(650, 350))
+    nps_nine_collider = nps_nine_scaled.get_rect(topleft=(650, 450))
 
     running = True
 
@@ -146,13 +149,16 @@ def park():
                 conn_money.commit()
                 money_collider.x = -100
                 money_collider.y = -100
+            if car_collider.colliderect(money_collider2):
+                money += 10
+                cursor_money.execute("UPDATE money SET chet_money = ? WHERE id = 1", (money,))
+                conn_money.commit()
+                money_collider2.x = -100
+                money_collider2.y = -100
         if car_collider.colliderect(parcing_collider):
             parcing_collider.x = -100
             parcing_collider.y = -100
         if car_collider.colliderect(tochka_win_collider):
-            money += 15
-            cursor_money.execute("UPDATE money SET chet_money = ? WHERE id = 1", (money,))
-            conn_money.commit()
             running1 = True
             clock = pygame.time.Clock()
             manager = pygame_gui.UIManager((800, 600))
@@ -200,6 +206,7 @@ def park():
         screen.blit(scaled_sprite, car_collider)
         screen.blit(nps_two_scaled, nps_two_collider)
         screen.blit(nps_one_scaled, nps_one_collider)
+        screen.blit(money_scaled2, money_collider2)
         screen.blit(nps_three_scaled, nps_three_collider)
         screen.blit(nps_four_scaled, nps_four_collider)
         screen.blit(nps_five_scaled, nps_five_collider)
@@ -212,6 +219,7 @@ def park():
         screen.blit(parcing_scaled, parcing_collider)
         screen.blit(text_money_surface, (20, 20))
         pygame.display.flip()
+
     pygame.quit()
 
 

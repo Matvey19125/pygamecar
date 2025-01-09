@@ -2,10 +2,10 @@ import pygame
 import random
 import sqlite3
 import pygame_gui
-
+from leveltwo import park2
 pygame.init()
 clock = pygame.time.Clock()
-
+pygame.display.set_caption("Ретро-Гонки")
 
 def park():
     size = width, height = 800, 960
@@ -28,6 +28,22 @@ def park():
     else:
         money = row[1]
     text = str(money)
+    conn_car = sqlite3.connect('level.db')
+    cursor_car = conn_car.cursor()
+    cursor_car.execute(
+        """ CREATE TABLE IF NOT EXISTS leveltable ( id INTEGER PRIMARY KEY, two INTEGER, three INTEGER, four INTEGER, five INTEGER ) """)
+    cursor_car.execute("SELECT * FROM leveltable WHERE id = ?", (1,))
+    row = cursor_car.fetchone()
+    if row is None:
+        count_two_level = 0
+        count_three_level = 0
+        count_four_level = 0
+        count_five_level = 0
+
+        cursor_car.execute(""" INSERT INTO leveltable (id, two, three, four, five) VALUES (?, ?, ?, ?, ?) """,
+                           (1, count_two_level, count_three_level, count_four_level, count_five_level))
+    else:
+        count_two_level = row[1]
     text_money_surface = font.render(text, True, (255, 255, 255))
     conn = sqlite3.connect('vibr.db')
     cursor = conn.cursor()
@@ -175,7 +191,11 @@ def park():
                         return
                     if event.type == pygame_gui.UI_BUTTON_PRESSED:
                         if event.ui_element == restart_button:
-                            pass
+                            count_two_level = 1
+                            cursor_car.execute(""" UPDATE leveltable SET two = ? WHERE id = 1 """, (count_two_level,))
+                            conn_car.commit()
+                            scene = park2()
+                            scene.park2()
                         if event.ui_element == menu_exit:
                             from Menu import menu
                             scene = menu()

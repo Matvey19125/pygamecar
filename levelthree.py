@@ -2,12 +2,12 @@ import pygame
 import random
 import sqlite3
 import pygame_gui
-
+from levelfour import park4
 pygame.init()
 clock = pygame.time.Clock()
+pygame.display.set_caption("Ретро-Гонки")
 
-
-def park():
+def park3():
     size = width, height = 800, 960
     screen = pygame.display.set_mode(size)
     fence_color = (150, 75, 0)
@@ -28,6 +28,22 @@ def park():
     else:
         money = row[1]
     text = str(money)
+    conn_car = sqlite3.connect('level.db')
+    cursor_car = conn_car.cursor()
+    cursor_car.execute(
+        """ CREATE TABLE IF NOT EXISTS leveltable ( id INTEGER PRIMARY KEY, two INTEGER, three INTEGER, four INTEGER, five INTEGER ) """)
+    cursor_car.execute("SELECT * FROM leveltable WHERE id = ?", (1,))
+    row = cursor_car.fetchone()
+    if row is None:
+        count_two_level = 0
+        count_three_level = 0
+        count_four_level = 0
+        count_five_level = 0
+
+        cursor_car.execute(""" INSERT INTO leveltable (id, two, three, four, five) VALUES (?, ?, ?, ?, ?) """,
+                           (1, count_two_level, count_three_level, count_four_level, count_five_level))
+    else:
+        count_four_level = row[1]
     text_money_surface = font.render(text, True, (255, 255, 255))
     conn = sqlite3.connect('vibr.db')
     cursor = conn.cursor()
@@ -108,7 +124,7 @@ def park():
                     return
                 if event.type == pygame_gui.UI_BUTTON_PRESSED:
                     if event.ui_element == restart_button:
-                        park()
+                        park3()
                         return
                     if event.ui_element == menu_exit:
                         from Menu import menu
@@ -175,7 +191,11 @@ def park():
                         return
                     if event.type == pygame_gui.UI_BUTTON_PRESSED:
                         if event.ui_element == restart_button:
-                            pass
+                            count_four_level = 1
+                            cursor_car.execute(""" UPDATE leveltable SET four = ? WHERE id = 1 """, (count_four_level,))
+                            conn_car.commit()
+                            scene = park4()
+                            scene.park4()
                         if event.ui_element == menu_exit:
                             from Menu import menu
                             scene = menu()
@@ -217,4 +237,4 @@ def park():
 
 
 if __name__ == "__main__":
-    park()
+    park3()

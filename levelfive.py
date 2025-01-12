@@ -41,9 +41,10 @@ def park5():
         'image/three_car.png',
         'image/four_car.png'
     ]
-    sprite_image = pygame.image.load(scrin_car[count_vibr])
+    sprite_image = pygame.image.load(scrin_car[count_vibr]).convert_alpha()
     scaled_sprite = pygame.transform.scale(sprite_image, (car_width, car_height))
     car_collider = scaled_sprite.get_rect(topleft=(car_x, car_y))
+    car_angle = 0
     money_image = pygame.image.load('image/money_image.png')
     money_scaled = pygame.transform.scale(money_image, (80, 80))
     money_collider = pygame.Rect((665, 600, 60, 60))
@@ -127,17 +128,22 @@ def park5():
                 running = False
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_d and car_x + car_width < width - 20:
+                    car_angle = 270
                     car_x += 30
                     car_collider.x = car_x
                 if event.key == pygame.K_a and car_x > 20:
+                    car_angle = 90
                     car_x -= 30
                     car_collider.x = car_x
                 if event.key == pygame.K_w and car_y > 20:
+                    car_angle = 0
                     car_y -= 30
                     car_collider.y = car_y
                 if event.key == pygame.K_s and car_y + car_height < height - 50:
+                    car_angle = 180
                     car_y += 30
                     car_collider.y = car_y
+        rotated_sprite = pygame.transform.rotate(scaled_sprite, car_angle)
         if car_collider.colliderect(nps_one_collider) or car_collider.colliderect(nps_two_collider) or car_collider.colliderect(nps_three_collider) or car_collider.colliderect(nps_four_collider):
             lose()
         if car_collider.colliderect(nps_five_collider) or car_collider.colliderect(nps_six_collider) or car_collider.colliderect(nps_seven_collider) or car_collider.colliderect(nps_eith_collider) or car_collider.colliderect(nps_nine_collider):
@@ -181,7 +187,9 @@ def park5():
                         return
                     if event.type == pygame_gui.UI_BUTTON_PRESSED:
                         if event.ui_element == restart_button:
-                            pass
+                            from awards import awards
+                            scene = awards()
+                            scene.awards()
                         if event.ui_element == menu_exit:
                             from Menu import menu
                             scene = menu()
@@ -203,7 +211,7 @@ def park5():
         pygame.draw.rect(screen, fence_color, (0, height - 10, width, 10))
         pygame.draw.rect(screen, fence_color, (0, 0, 10, height))
         pygame.draw.rect(screen, fence_color, (width - 10, 0, 10, height))
-        screen.blit(scaled_sprite, car_collider)
+        screen.blit(rotated_sprite, car_collider)
         screen.blit(nps_two_scaled, nps_two_collider)
         screen.blit(nps_one_scaled, nps_one_collider)
         screen.blit(money_scaled2, money_collider2)
@@ -219,7 +227,6 @@ def park5():
         screen.blit(parcing_scaled, parcing_collider)
         screen.blit(text_money_surface, (20, 20))
         pygame.display.flip()
-
     pygame.quit()
 
 

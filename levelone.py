@@ -3,10 +3,11 @@ import random
 import sqlite3
 import pygame_gui
 from leveltwo import park2
+
+
 pygame.init()
 clock = pygame.time.Clock()
 pygame.display.set_caption("Ретро-Гонки")
-
 def park():
     size = width, height = 800, 960
     screen = pygame.display.set_mode(size)
@@ -39,7 +40,6 @@ def park():
         count_three_level = 0
         count_four_level = 0
         count_five_level = 0
-
         cursor_car.execute(""" INSERT INTO leveltable (id, two, three, four, five) VALUES (?, ?, ?, ?, ?) """,
                            (1, count_two_level, count_three_level, count_four_level, count_five_level))
     else:
@@ -63,45 +63,43 @@ def park():
     car_collider = scaled_sprite.get_rect(topleft=(car_x, car_y))
     money_image = pygame.image.load('image/money_image.png')
     money_scaled = pygame.transform.scale(money_image, (80, 80))
-    money_collider = pygame.Rect(635, 100, 60, 60)
+    money_collider = pygame.Rect(655, 100, 80, 80)
     tochka_win = pygame.image.load("image/win.png")
     tochka_win_scaled = pygame.transform.scale(tochka_win, (20, 20))
-    tochka_win_collider = pygame.Rect(370, 600, 20, 20)
+    tochka_win_collider = pygame.Rect(390, 600, 20, 20)
     parcing_image = pygame.image.load('image/parcing.png')
     parcing_scaled = pygame.transform.scale(parcing_image, (60, 90))
-    parcing_collider = pygame.Rect(335, 555, 20, 20)
+    parcing_collider = pygame.Rect(355, 555, 80, 80)
     nps_car = ['image/potok_car1.png', 'image/potok_car2.png', 'image/potok_car3.png', 'image/potok_car4.png', 'image/potok_car5.png', 'image/potok_car6.png']
     nps_one_sprite = pygame.image.load(nps_car[random.randrange(0, 6)])
     nps_one_scaled = pygame.transform.scale(nps_one_sprite, (car_width, car_height))
-    nps_one_collider = nps_one_scaled.get_rect(topleft=(400, 400))
+    nps_one_collider = nps_one_scaled.get_rect(topleft=(450, 400))
     nps_two_sprite = pygame.image.load(nps_car[random.randrange(0, 6)])
     nps_two_scaled = pygame.transform.scale(nps_two_sprite, (car_width, car_height))
-    nps_two_collider = nps_two_scaled.get_rect(topleft=(400, 535))
+    nps_two_collider = nps_two_scaled.get_rect(topleft=(450, 535))
     nps_three_sprite = pygame.image.load(nps_car[random.randrange(0, 6)])
     nps_three_scaled = pygame.transform.scale(nps_three_sprite, (car_width, car_height))
-    nps_three_collider = nps_three_scaled.get_rect(topleft=(400, 670))
+    nps_three_collider = nps_three_scaled.get_rect(topleft=(450, 670))
     nps_four_sprite = pygame.image.load(nps_car[random.randrange(0, 6)])
     nps_four_scaled = pygame.transform.scale(nps_four_sprite, (car_width, car_height))
-    nps_four_collider = nps_four_scaled.get_rect(topleft=(305, 670))
+    nps_four_collider = nps_four_scaled.get_rect(topleft=(605, 670))
     nps_five_sprite = pygame.image.load(nps_car[random.randrange(0, 6)])
     nps_five_scaled = pygame.transform.scale(nps_five_sprite, (car_width, car_height))
-    nps_five_collider = nps_five_scaled.get_rect(topleft=(305, 400))
+    nps_five_collider = nps_five_scaled.get_rect(topleft=(335, 400))
     nps_six_sprite = pygame.image.load(nps_car[random.randrange(0, 6)])
     nps_six_scaled = pygame.transform.scale(nps_six_sprite, (car_width, car_height))
-    nps_six_collider = nps_six_scaled.get_rect(topleft=(60, 490))
+    nps_six_collider = nps_six_scaled.get_rect(topleft=(220, 490))
     nps_seven_sprite = pygame.image.load(nps_car[random.randrange(0, 6)])
     nps_seven_sprite = pygame.transform.rotate(nps_seven_sprite, 90)
     nps_seven_scaled = pygame.transform.scale(nps_seven_sprite, (car_height, car_width))
-    nps_seven_collider = nps_seven_scaled.get_rect(topleft=(150, 700))
+    nps_seven_collider = nps_seven_scaled.get_rect(topleft=(150, 600))
     nps_eith_sprite = pygame.image.load(nps_car[random.randrange(0, 6)])
     nps_eith_scaled = pygame.transform.scale(nps_eith_sprite, (car_width, car_height))
     nps_eith_collider = nps_eith_scaled.get_rect(topleft=(500, 50))
     nps_nine_sprite = pygame.image.load(nps_car[random.randrange(0, 6)])
     nps_nine_scaled = pygame.transform.scale(nps_nine_sprite, (car_width, car_height))
     nps_nine_collider = nps_nine_scaled.get_rect(topleft=(650, 350))
-
     running = True
-
     def lose():
         running1 = True
         clock = pygame.time.Clock()
@@ -157,6 +155,7 @@ def park():
                     car_y += 30
                     car_collider.y = car_y
         rotated_sprite = pygame.transform.rotate(scaled_sprite, car_angle)
+        car_collider = rotated_sprite.get_rect(topleft=(car_x, car_y))
         if car_collider.colliderect(nps_one_collider) or car_collider.colliderect(nps_two_collider) or car_collider.colliderect(nps_three_collider) or car_collider.colliderect(nps_four_collider):
             lose()
         if car_collider.colliderect(nps_five_collider) or car_collider.colliderect(nps_six_collider) or car_collider.colliderect(nps_seven_collider) or car_collider.colliderect(nps_eith_collider) or car_collider.colliderect(nps_nine_collider):

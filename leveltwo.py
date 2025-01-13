@@ -157,6 +157,7 @@ def park2():
                     car_y += 30
                     car_collider.y = car_y
         rotated_sprite = pygame.transform.rotate(scaled_sprite, car_angle)
+        car_collider = rotated_sprite.get_rect(topleft=(car_x, car_y))
         if car_collider.colliderect(nps_one_collider) or car_collider.colliderect(nps_two_collider) or car_collider.colliderect(nps_three_collider) or car_collider.colliderect(nps_four_collider):
             lose()
         if car_collider.colliderect(nps_five_collider) or car_collider.colliderect(nps_six_collider) or car_collider.colliderect(nps_seven_collider) or car_collider.colliderect(nps_eith_collider) or car_collider.colliderect(nps_nine_collider):

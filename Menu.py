@@ -2,6 +2,7 @@ import pygame
 import sys
 from razvil import razvil
 from shop import shop
+from awards import awards
 
 
 def menu():
@@ -17,6 +18,8 @@ def menu():
     play_text = 'Играть'
     shop_text = 'Магазин'
     exit_text = 'Выход'
+    awards_text = "Награды"
+    button_awards = font.render(awards_text, True, WHITE)
     play_button_normal = font.render(play_text, True, WHITE)
     shop_button_normal = font.render(shop_text, True, WHITE)
     exit_button_normal = font.render(exit_text, True, WHITE)
@@ -24,11 +27,14 @@ def menu():
     play_button_hover = font_large.render(play_text, True, RED)
     shop_button_hover = font_large.render(shop_text, True, RED)
     exit_button_hover = font_large.render(exit_text, True, RED)
-    play_button_rect = play_button_normal.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2 - 100))
-    shop_button_rect = shop_button_normal.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2))
-    exit_button_rect = exit_button_normal.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2 + 100))
+    awards_button_hover = font_large.render(awards_text, True, RED)
+    play_button_rect = play_button_normal.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2 - 150))
+    shop_button_rect = shop_button_normal.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2 - 75))
+    awards_button_rect = button_awards.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2))
+    exit_button_rect = exit_button_normal.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2 + 75))
     play_button_hover_rect = play_button_hover.get_rect(center=play_button_rect.center)
     shop_button_hover_rect = shop_button_hover.get_rect(center=shop_button_rect.center)
+    awards_button_hover_rect = awards_button_hover.get_rect(center=awards_button_rect.center)
     exit_button_hover_rect = exit_button_hover.get_rect(center=exit_button_rect.center)
     mouse_pos = pygame.mouse.get_pos()
     clock = pygame.time.Clock()
@@ -53,10 +59,12 @@ def menu():
                     scene = shop()
                     scene.shop()
                     running = True
+                elif awards_button_rect.collidepoint(event.pos):
+                    scene = awards()
+                    scene.awards()
                 elif exit_button_rect.collidepoint(event.pos):
                     pygame.quit()
                     sys.exit()
-
         if play_button_rect.collidepoint(mouse_pos):
             play_button_to_draw = play_button_hover
             play_button_rect_to_use = play_button_hover_rect
@@ -71,16 +79,22 @@ def menu():
             shop_button_to_draw = shop_button_normal
             shop_button_rect_to_use = shop_button_rect
 
+        if awards_button_rect.collidepoint(mouse_pos):
+            awards_button_to_draw = awards_button_hover
+            awards_button_rect_to_use = awards_button_hover_rect
+        else:
+            awards_button_to_draw = button_awards
+            awards_button_rect_to_use = awards_button_rect
         if exit_button_rect.collidepoint(mouse_pos):
             exit_button_to_draw = exit_button_hover
             exit_button_rect_to_use = exit_button_hover_rect
         else:
             exit_button_to_draw = exit_button_normal
             exit_button_rect_to_use = exit_button_rect
-
         screen.blit(background, (0, 0))
         screen.blit(play_button_to_draw, play_button_rect_to_use)
         screen.blit(shop_button_to_draw, shop_button_rect_to_use)
+        screen.blit(awards_button_to_draw, awards_button_rect_to_use)
         screen.blit(exit_button_to_draw, exit_button_rect_to_use)
         pygame.display.flip()
         clock.tick(60)

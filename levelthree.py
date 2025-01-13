@@ -7,7 +7,8 @@ pygame.init()
 clock = pygame.time.Clock()
 pygame.display.set_caption("Ретро-Гонки")
 
-def park3():
+
+def park():
     size = width, height = 800, 960
     screen = pygame.display.set_mode(size)
     fence_color = (150, 75, 0)
@@ -39,11 +40,10 @@ def park3():
         count_three_level = 0
         count_four_level = 0
         count_five_level = 0
-
         cursor_car.execute(""" INSERT INTO leveltable (id, two, three, four, five) VALUES (?, ?, ?, ?, ?) """,
                            (1, count_two_level, count_three_level, count_four_level, count_five_level))
     else:
-        count_four_level = row[1]
+        count_two_level = row[1]
     text_money_surface = font.render(text, True, (255, 255, 255))
     conn = sqlite3.connect('vibr.db')
     cursor = conn.cursor()
@@ -59,49 +59,48 @@ def park3():
     ]
     sprite_image = pygame.image.load(scrin_car[count_vibr]).convert_alpha()
     scaled_sprite = pygame.transform.scale(sprite_image, (car_width, car_height))
-    car_collider = scaled_sprite.get_rect(topleft=(car_x, car_y))
     car_angle = 0
+    car_collider = scaled_sprite.get_rect(topleft=(car_x, car_y))
     money_image = pygame.image.load('image/money_image.png')
     money_scaled = pygame.transform.scale(money_image, (80, 80))
-    money_collider = pygame.Rect((635, 600, 60, 60))
+    money_collider = pygame.Rect(420, 100, 60, 60)
     tochka_win = pygame.image.load("image/win.png")
     tochka_win_scaled = pygame.transform.scale(tochka_win, (20, 20))
-    tochka_win_collider = pygame.Rect((325, 570, 20, 20))
+    tochka_win_collider = pygame.Rect(340, 460, 20, 20)
     parcing_image = pygame.image.load('image/parcing.png')
     parcing_scaled = pygame.transform.scale(parcing_image, (60, 90))
-    parcing_collider = pygame.Rect((325, 550, 60, 60))
+    parcing_scaled = pygame.transform.rotate(parcing_scaled, 90)
+    parcing_collider = pygame.Rect(335, 460, 80, 80)
     nps_car = ['image/potok_car1.png', 'image/potok_car2.png', 'image/potok_car3.png', 'image/potok_car4.png', 'image/potok_car5.png', 'image/potok_car6.png']
     nps_one_sprite = pygame.image.load(nps_car[random.randrange(0, 6)])
     nps_one_scaled = pygame.transform.scale(nps_one_sprite, (car_width, car_height))
-    nps_one_collider = nps_one_scaled.get_rect(topleft=(200, 400))
+    nps_one_collider = nps_one_scaled.get_rect(topleft=(400, 300))
     nps_two_sprite = pygame.image.load(nps_car[random.randrange(0, 6)])
     nps_two_scaled = pygame.transform.scale(nps_two_sprite, (car_width, car_height))
-    nps_two_collider = nps_two_scaled.get_rect(topleft=(200, 535))
+    nps_two_collider = nps_two_scaled.get_rect(topleft=(300, 50))
     nps_three_sprite = pygame.image.load(nps_car[random.randrange(0, 6)])
     nps_three_scaled = pygame.transform.scale(nps_three_sprite, (car_width, car_height))
-    nps_three_collider = nps_three_scaled.get_rect(topleft=(525, 570))
+    nps_three_collider = nps_three_scaled.get_rect(topleft=(400, 550))
     nps_four_sprite = pygame.image.load(nps_car[random.randrange(0, 6)])
     nps_four_scaled = pygame.transform.scale(nps_four_sprite, (car_width, car_height))
-    nps_four_collider = nps_four_scaled.get_rect(topleft=(305, 670))
+    nps_four_collider = nps_four_scaled.get_rect(topleft=(640, 450))
     nps_five_sprite = pygame.image.load(nps_car[random.randrange(0, 6)])
     nps_five_scaled = pygame.transform.scale(nps_five_sprite, (car_width, car_height))
-    nps_five_collider = nps_five_scaled.get_rect(topleft=(305, 400))
+    nps_five_collider = nps_five_scaled.get_rect(topleft=(305, 300))
     nps_six_sprite = pygame.image.load(nps_car[random.randrange(0, 6)])
     nps_six_scaled = pygame.transform.scale(nps_six_sprite, (car_width, car_height))
-    nps_six_collider = nps_six_scaled.get_rect(topleft=(540, 290))
+    nps_six_collider = nps_six_scaled.get_rect(topleft=(220, 450))
     nps_seven_sprite = pygame.image.load(nps_car[random.randrange(0, 6)])
     nps_seven_sprite = pygame.transform.rotate(nps_seven_sprite, 90)
     nps_seven_scaled = pygame.transform.scale(nps_seven_sprite, (car_height, car_width))
-    nps_seven_collider = nps_seven_scaled.get_rect(topleft=(450, 700))
+    nps_seven_collider = nps_seven_scaled.get_rect(topleft=(150, 600))
     nps_eith_sprite = pygame.image.load(nps_car[random.randrange(0, 6)])
     nps_eith_scaled = pygame.transform.scale(nps_eith_sprite, (car_width, car_height))
-    nps_eith_collider = nps_eith_scaled.get_rect(topleft=(300, 50))
+    nps_eith_collider = nps_eith_scaled.get_rect(topleft=(630, 50))
     nps_nine_sprite = pygame.image.load(nps_car[random.randrange(0, 6)])
     nps_nine_scaled = pygame.transform.scale(nps_nine_sprite, (car_width, car_height))
-    nps_nine_collider = nps_nine_scaled.get_rect(topleft=(650, 450))
-
+    nps_nine_collider = nps_nine_scaled.get_rect(topleft=(300, 550))
     running = True
-
     def lose():
         running1 = True
         clock = pygame.time.Clock()
@@ -125,7 +124,7 @@ def park3():
                     return
                 if event.type == pygame_gui.UI_BUTTON_PRESSED:
                     if event.ui_element == restart_button:
-                        park3()
+                        park()
                         return
                     if event.ui_element == menu_exit:
                         from Menu import menu
@@ -157,6 +156,7 @@ def park3():
                     car_y += 30
                     car_collider.y = car_y
         rotated_sprite = pygame.transform.rotate(scaled_sprite, car_angle)
+        car_collider = rotated_sprite.get_rect(topleft=(car_x, car_y))
         if car_collider.colliderect(nps_one_collider) or car_collider.colliderect(nps_two_collider) or car_collider.colliderect(nps_three_collider) or car_collider.colliderect(nps_four_collider):
             lose()
         if car_collider.colliderect(nps_five_collider) or car_collider.colliderect(nps_six_collider) or car_collider.colliderect(nps_seven_collider) or car_collider.colliderect(nps_eith_collider) or car_collider.colliderect(nps_nine_collider):
@@ -197,8 +197,8 @@ def park3():
                         return
                     if event.type == pygame_gui.UI_BUTTON_PRESSED:
                         if event.ui_element == restart_button:
-                            count_four_level = 1
-                            cursor_car.execute(""" UPDATE leveltable SET four = ? WHERE id = 1 """, (count_four_level,))
+                            count_two_level = 1
+                            cursor_car.execute(""" UPDATE leveltable SET two = ? WHERE id = 1 """, (count_two_level,))
                             conn_car.commit()
                             scene = park4()
                             scene.park4()
@@ -238,9 +238,6 @@ def park3():
         screen.blit(parcing_scaled, parcing_collider)
         screen.blit(text_money_surface, (20, 20))
         pygame.display.flip()
-
     pygame.quit()
-
-
 if __name__ == "__main__":
-    park3()
+    park()

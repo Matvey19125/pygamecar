@@ -1,5 +1,6 @@
 import pygame
 import sys
+import sqlite3
 from razvil import razvil
 from shop import shop
 from awards import awards
@@ -14,6 +15,17 @@ def menu():
     background = pygame.transform.scale(background, (screen.get_width(), screen.get_height()))
     WHITE = (255, 255, 255)
     RED = (255, 50, 0)
+    count_vibr = 0
+    conn_vibr = sqlite3.connect('vibr.db')
+    cursor_vibr = conn_vibr.cursor()
+    cursor_vibr.execute("CREATE TABLE IF NOT EXISTS vibr (id INTEGER PRIMARY KEY, count_vibr INTEGER)")
+    cursor_vibr.execute("SELECT * FROM vibr WHERE id = 1")
+    row = cursor_vibr.fetchone()
+    if row is None:
+        cursor_vibr.execute("INSERT INTO vibr (id, count_vibr) VALUES (1, ?)", (count_vibr,))
+        conn_vibr.commit()
+    else:
+        count_vibr = row[1]
     font = pygame.font.Font(None, 74)
     play_text = 'Играть'
     shop_text = 'Магазин'

@@ -105,11 +105,6 @@ class Shoes:
         self.conn.commit()
 
     def update(self):
-        self.collider_money()
-        self.pot_dvish()
-        self.save_money()
-        self.money_chet()
-        self.draw()
         cycle()
 
 
@@ -204,7 +199,7 @@ def cycle():
     running = True
     clock = pygame.time.Clock()
     while running:
-        clock.tick(60)
+        clock.tick(144)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False

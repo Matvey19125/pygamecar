@@ -170,7 +170,7 @@ class Shoes:
                                                  text='Выход',
                                                  manager=manager)
         while running:
-            time_delta = clock.tick(60) / 1000.0
+            time_delta = clock.tick(60) / 1
             self.screen.fill((0, 0, 0))
             font = pygame.font.Font(None, 35)
             text = font.render("Вы врезались! Нажмите кнопку 'Заново' для перезагрузки", True, (255, 255, 255))

@@ -42,6 +42,10 @@ def razvil():
                     from revers import Rervers
                     scene = Rervers()
                     scene.update()
+                if button_parcing_rect.collidepoint(event.pos):
+                    from levelparking import level_menu
+                    scene = level_menu()
+                    scene.level_menu()
                 if exit_button_rect.collidepoint(event.pos):
                     from Menu import menu
                     scene = menu()

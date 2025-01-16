@@ -4,6 +4,7 @@ import sqlite3
 from razvil import razvil
 from shop import shop
 from awards import awards
+from fortuna import fortuna
 
 
 def menu():
@@ -29,23 +30,28 @@ def menu():
     font = pygame.font.Font(None, 74)
     play_text = 'Играть'
     shop_text = 'Магазин'
+    fortune_wheel_text = 'Колесо Фортуны'  # Новый текст для кнопки Колеса Фортуны
     exit_text = 'Выход'
     awards_text = "Награды"
     button_awards = font.render(awards_text, True, WHITE)
     play_button_normal = font.render(play_text, True, WHITE)
     shop_button_normal = font.render(shop_text, True, WHITE)
+    fortune_wheel_button_normal = font.render(fortune_wheel_text, True, WHITE)  # Кнопка Колеса Фортуны
     exit_button_normal = font.render(exit_text, True, WHITE)
     font_large = pygame.font.Font(None, 80)
     play_button_hover = font_large.render(play_text, True, RED)
     shop_button_hover = font_large.render(shop_text, True, RED)
+    fortune_wheel_button_hover = font_large.render(fortune_wheel_text, True, RED)  # Кнопка Колеса Фортуны
     exit_button_hover = font_large.render(exit_text, True, RED)
     awards_button_hover = font_large.render(awards_text, True, RED)
-    play_button_rect = play_button_normal.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2 - 150))
-    shop_button_rect = shop_button_normal.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2 - 75))
-    awards_button_rect = button_awards.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2))
-    exit_button_rect = exit_button_normal.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2 + 75))
+    play_button_rect = play_button_normal.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2 - 200))  # Сдвигаем все кнопки вниз
+    shop_button_rect = shop_button_normal.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2 - 125))
+    fortune_wheel_button_rect = fortune_wheel_button_normal.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2 + 25))  # Добавляем позицию для новой кнопки
+    awards_button_rect = button_awards.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2 - 50))
+    exit_button_rect = exit_button_normal.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2 + 100))
     play_button_hover_rect = play_button_hover.get_rect(center=play_button_rect.center)
     shop_button_hover_rect = shop_button_hover.get_rect(center=shop_button_rect.center)
+    fortune_wheel_button_hover_rect = fortune_wheel_button_hover.get_rect(center=fortune_wheel_button_rect.center)  # Добавляем новую кнопку
     awards_button_hover_rect = awards_button_hover.get_rect(center=awards_button_rect.center)
     exit_button_hover_rect = exit_button_hover.get_rect(center=exit_button_rect.center)
     mouse_pos = pygame.mouse.get_pos()
@@ -71,6 +77,9 @@ def menu():
                     scene = shop()
                     scene.shop()
                     running = True
+                elif fortune_wheel_button_rect.collidepoint(event.pos):
+                    scene = fortuna()
+                    scene.fortuna()
                 elif awards_button_rect.collidepoint(event.pos):
                     scene = awards()
                     scene.awards()
@@ -90,6 +99,12 @@ def menu():
         else:
             shop_button_to_draw = shop_button_normal
             shop_button_rect_to_use = shop_button_rect
+        if fortune_wheel_button_rect.collidepoint(mouse_pos):
+            fortune_wheel_button_to_draw = fortune_wheel_button_hover
+            fortune_wheel_button_rect_to_use = fortune_wheel_button_hover_rect
+        else:
+            fortune_wheel_button_to_draw = fortune_wheel_button_normal
+            fortune_wheel_button_rect_to_use = fortune_wheel_button_rect
 
         if awards_button_rect.collidepoint(mouse_pos):
             awards_button_to_draw = awards_button_hover
@@ -106,6 +121,7 @@ def menu():
         screen.blit(background, (0, 0))
         screen.blit(play_button_to_draw, play_button_rect_to_use)
         screen.blit(shop_button_to_draw, shop_button_rect_to_use)
+        screen.blit(fortune_wheel_button_to_draw, fortune_wheel_button_rect_to_use)
         screen.blit(awards_button_to_draw, awards_button_rect_to_use)
         screen.blit(exit_button_to_draw, exit_button_rect_to_use)
         pygame.display.flip()

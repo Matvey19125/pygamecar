@@ -8,7 +8,7 @@ clock = pygame.time.Clock()
 pygame.display.set_caption("Ретро-Гонки")
 
 
-def park():
+def park3():
     size = width, height = 800, 960
     screen = pygame.display.set_mode(size)
     fence_color = (150, 75, 0)
@@ -124,7 +124,7 @@ def park():
                     return
                 if event.type == pygame_gui.UI_BUTTON_PRESSED:
                     if event.ui_element == restart_button:
-                        park()
+                        park3()
                         return
                     if event.ui_element == menu_exit:
                         from Menu import menu
@@ -240,4 +240,4 @@ def park():
         pygame.display.flip()
     pygame.quit()
 if __name__ == "__main__":
-    park()
+    park3()

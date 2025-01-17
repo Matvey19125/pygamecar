@@ -51,7 +51,7 @@ class Shoes:
             self.cursor.execute("INSERT INTO money (id, chet_money) VALUES (1, 0)")
             self.conn.commit()
         self.active_streams = []
-        self.speed = 60
+        self.speed = 10
 
     def collider_money(self):
         self.money_y += self.speed
@@ -125,7 +125,7 @@ class Shoes:
         rect_width = 700
         rect_height = 950
         pygame.draw.rect(self.screen, self.colors[0], pygame.Rect(rect_x, rect_y, rect_width, rect_height))
-        og = self.height // 2
+        og = self.height // 50
         count = 0
         for i in range(0, og):
             rect_x = 250
@@ -159,47 +159,12 @@ class Shoes:
         self.money_y = 50
         self.money_x = random.choice([115, 375, 615])
 
-    def lose_scene(self):
-        running = True
-        clock = pygame.time.Clock()
-        manager = pygame_gui.UIManager((800, 600))
-        restart_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((150, 450), (200, 150)),
-                                                      text='Заново',
-                                                      manager=manager)
-        menu_exit = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((450, 450), (200, 150)),
-                                                 text='Выход',
-                                                 manager=manager)
-        while running:
-            time_delta = clock.tick(60) / 1
-            self.screen.fill((0, 0, 0))
-            font = pygame.font.Font(None, 35)
-            text = font.render("Вы врезались! Нажмите кнопку 'Заново' для перезагрузки", True, (255, 255, 255))
-            text_rect = text.get_rect(center=(400, 250))
-            self.screen.blit(text, text_rect)
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    return
-                if event.type == pygame_gui.UI_BUTTON_PRESSED:
-                    if event.ui_element == restart_button:
-                        self.__init__()
-                        return
-                    if event.ui_element == menu_exit:
-                        from Menu import menu
-                        scene = menu()
-                        scene.menu()
-                manager.process_events(event)
-            manager.update(time_delta)
-            manager.draw_ui(self.screen)
-            pygame.display.update()
-
-
 def cycle():
     shoes = Shoes()
     running = True
     clock = pygame.time.Clock()
     while running:
-        clock.tick(144)
+        clock.tick(60)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
@@ -209,25 +174,13 @@ def cycle():
                 if shoes.speed < 10:
                     shoes.speed = 10
             elif keys[pygame.K_w]:
-                if shoes.count_vibr == 0:
-                    shoes.speed += 5
-                    print(shoes.speed)
-                if shoes.count_vibr == 1:
-                    shoes.speed += 8
-                    print(shoes.speed)
-                if shoes.count_vibr == 2:
-                    shoes.speed += 12
-                    print(shoes.speed)
-                if shoes.count_vibr == 3:
-                    shoes.speed += 15
-                    print(shoes.speed)
-                if shoes.count_vibr == 4:
-                    shoes.speed += 20
-                    print(shoes.speed)
+                speed_increments = [5, 8, 12, 15, 20]
+                if shoes.count_vibr < len(speed_increments):
+                    shoes.speed += speed_increments[shoes.count_vibr]
                 if shoes.speed > 90:
                     shoes.speed = 90
             else:
-                shoes.speed = 60
+                shoes.speed = 10
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_d:
                     shoes.car_right()
@@ -239,9 +192,9 @@ def cycle():
                     shoes.speed -= 20
                     if shoes.speed < 1:
                         shoes.speed = 1
-            elif event.type == TIMEREVENT:
+            if event.type == TIMEREVENT:
                 shoes.spawn_money()
-            elif event.type == timerpot:
+            if event.type == timerpot:
                 shoes.potok()
         if not running:
             break

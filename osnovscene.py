@@ -2,14 +2,18 @@ import pygame
 import random
 import sqlite3
 import pygame_gui
+import time
 pygame.init()
 clock = pygame.time.Clock()
 TIMEREVENT = pygame.USEREVENT + 1
 timerpot = pygame.USEREVENT + 2
+SPEEDUP_TIMEREVENT = pygame.USEREVENT + 3
 pygame.time.set_timer(timerpot, 1250)
+pygame.time.set_timer(SPEEDUP_TIMEREVENT, 500)
 pygame.time.set_timer(TIMEREVENT, 15000)
 pygame.display.set_caption("Ретро-Гонки")
 count_stolk = 0
+
 
 class Shoes:
     def __init__(self):
@@ -51,7 +55,7 @@ class Shoes:
             self.cursor.execute("INSERT INTO money (id, chet_money) VALUES (1, 0)")
             self.conn.commit()
         self.active_streams = []
-        self.speed = 60
+        self.speed = 10
 
     def collider_money(self):
         self.money_y += self.speed
@@ -107,7 +111,6 @@ class Shoes:
     def update(self):
         cycle()
 
-
     def money_chet(self):
         global count_stolk
         self.chet_money = str(self.chet_money)
@@ -125,9 +128,9 @@ class Shoes:
         rect_width = 700
         rect_height = 950
         pygame.draw.rect(self.screen, self.colors[0], pygame.Rect(rect_x, rect_y, rect_width, rect_height))
-        og = self.height // 2
+        og = 1
         count = 0
-        for i in range(0, og):
+        for i in range(0, 75):
             rect_x = 250
             rect_x2 = 515
             rect_width = 35
@@ -137,7 +140,6 @@ class Shoes:
             count -= 55
         self.screen.blit(self.scaled_sprite, (self.car_x, self.car_y))
         self.screen.blit(self.money_sprite, (self.money_x, self.money_y))
-
 
     def car_right(self):
         if self.count == 0:
@@ -195,39 +197,37 @@ class Shoes:
 
 
 def cycle():
+    conn_awards = sqlite3.connect("awards.db")
+    cursor_awards = conn_awards.cursor()
+    cursor_awards.execute(
+        """ CREATE TABLE IF NOT EXISTS awards_table ( id INTEGER PRIMARY KEY, count_parking INTEGER, count_revers INTEGER, count_shashki INTEGER ) """)
+    cursor_awards.execute("SELECT * FROM awards_table WHERE id = 1")
+    i = cursor_awards.fetchone()
+    if i is None:
+        count_shashki = 0
+        cursor_awards.execute(
+            """ INSERT INTO awards_table (id, count_parking, count_revers, count_shashki) VALUES (1, ?, ?, ?) """,
+            (count_shashki,))
+    else:
+        count_shashki1 = i[3]
     shoes = Shoes()
     running = True
-    clock = pygame.time.Clock()
+    w_held_down = False
+    s_held_down = False
+    awards = False
+    start_timer_awards = time.time()
     while running:
-        clock.tick(144)
+        current_time_awards = time.time()
+        if (current_time_awards - start_timer_awards) >= 2 and awards == False:
+            count_shashki = 1
+            cursor_awards.execute(""" UPDATE awards_table SET count_shashki = ? WHERE id = 1 """, (count_shashki,))
+            conn_awards.commit()
+            print(1)
+            awards = True
+        clock.tick(140)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-            keys = pygame.key.get_pressed()
-            if keys[pygame.K_s] and count_stolk == 0:
-                shoes.speed -= 5
-                if shoes.speed < 10:
-                    shoes.speed = 10
-            elif keys[pygame.K_w]:
-                if shoes.count_vibr == 0:
-                    shoes.speed += 5
-                    print(shoes.speed)
-                if shoes.count_vibr == 1:
-                    shoes.speed += 8
-                    print(shoes.speed)
-                if shoes.count_vibr == 2:
-                    shoes.speed += 12
-                    print(shoes.speed)
-                if shoes.count_vibr == 3:
-                    shoes.speed += 15
-                    print(shoes.speed)
-                if shoes.count_vibr == 4:
-                    shoes.speed += 20
-                    print(shoes.speed)
-                if shoes.speed > 90:
-                    shoes.speed = 90
-            else:
-                shoes.speed = 60
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_d:
                     shoes.car_right()
@@ -235,16 +235,30 @@ def cycle():
                     pygame.quit()
                 elif event.key == pygame.K_a:
                     shoes.car_left()
-                elif event.key == pygame.K_s:
-                    shoes.speed -= 20
-                    if shoes.speed < 1:
-                        shoes.speed = 1
             elif event.type == TIMEREVENT:
                 shoes.spawn_money()
+            elif event.type == SPEEDUP_TIMEREVENT:
+                if w_held_down:
+                    shoes.potok()
             elif event.type == timerpot:
-                shoes.potok()
-        if not running:
-            break
+                if not w_held_down:
+                    shoes.potok()
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_w]:
+            w_held_down = True
+            if shoes.speed < 40:
+                shoes.speed += 1
+        else:
+            w_held_down = False
+
+        if keys[pygame.K_s]:
+            s_held_down = True
+            if shoes.speed > 5:
+                shoes.speed -= 1
+        else:
+            s_held_down = False
+        if not w_held_down and not s_held_down:
+            shoes.speed = 10
         shoes.pot_dvish()
         shoes.save_money()
         shoes.collider_potok()

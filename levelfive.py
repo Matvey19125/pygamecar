@@ -57,6 +57,19 @@ def park5():
     parcing_image = pygame.image.load('image/parcing.png')
     parcing_scaled = pygame.transform.scale(parcing_image, (60, 90))
     parcing_collider = pygame.Rect((50, 580, 80, 80))
+    count_parking = 0
+    conn_awards = sqlite3.connect("awards.db")
+    cursor_awards = conn_awards.cursor()
+    cursor_awards.execute(
+        """ CREATE TABLE IF NOT EXISTS awards_table ( id INTEGER PRIMARY KEY, count_parking INTEGER, count_revers INTEGER, count_shashki INTEGER ) """)
+    cursor_awards.execute("SELECT * FROM awards_table WHERE id = 1")
+    i = cursor_awards.fetchone()
+    if i is None:
+        cursor_awards.execute(
+            """ INSERT INTO awards_table (id, count_parking, count_revers, count_shashki) VALUES (1, ?, ?, ?) """,
+            (count_parking,))
+    else:
+        count_parking = i[1]
     nps_car = ['image/potok_car1.png', 'image/potok_car2.png', 'image/potok_car3.png', 'image/potok_car4.png', 'image/potok_car5.png', 'image/potok_car6.png']
     nps_one_sprite = pygame.image.load(nps_car[random.randrange(0, 6)])
     nps_one_scaled = pygame.transform.scale(nps_one_sprite, (car_width, car_height))
@@ -187,10 +200,17 @@ def park5():
                         return
                     if event.type == pygame_gui.UI_BUTTON_PRESSED:
                         if event.ui_element == restart_button:
+                            count_parking = 1
+                            cursor_awards.execute(""" UPDATE awards_table SET count_parking = ? WHERE id = 1 """,
+                                                  (count_parking,))
+                            conn_awards.commit()
                             from awards import awards
                             scene = awards()
                             scene.awards()
                         if event.ui_element == menu_exit:
+                            count_parking = 1
+                            cursor_awards.execute(""" UPDATE awards_table SET count_parking = ? WHERE id = 1 """, (count_parking,))
+                            conn_awards.commit()
                             from Menu import menu
                             scene = menu()
                             scene.menu()

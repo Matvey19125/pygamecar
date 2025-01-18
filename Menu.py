@@ -17,6 +17,9 @@ def menu():
     WHITE = (255, 255, 255)
     RED = (255, 50, 0)
     count_vibr = 0
+    count_parking = 0
+    count_revers = 0
+    count_shashki = 0
     conn_vibr = sqlite3.connect('vibr.db')
     cursor_vibr = conn_vibr.cursor()
     cursor_vibr.execute("CREATE TABLE IF NOT EXISTS vibr (id INTEGER PRIMARY KEY, count_vibr INTEGER)")
@@ -27,31 +30,42 @@ def menu():
         conn_vibr.commit()
     else:
         count_vibr = row[1]
+    conn_awards = sqlite3.connect("awards.db")
+    cursor_awards = conn_awards.cursor()
+    cursor_awards.execute(
+        """ CREATE TABLE IF NOT EXISTS awards_table ( id INTEGER PRIMARY KEY, count_parking INTEGER, count_revers INTEGER, count_shashki INTEGER ) """)
+    cursor_awards.execute("SELECT * FROM awards_table WHERE id = 1")
+    i = cursor_awards.fetchone()
+    if i is None:
+        cursor_awards.execute(
+            """ INSERT INTO awards_table (id, count_parking, count_revers, count_shashki) VALUES (1, ?, ?, ?) """,
+            (count_parking, count_revers, count_shashki))
+    conn_awards.commit()
     font = pygame.font.Font(None, 74)
     play_text = 'Играть'
     shop_text = 'Магазин'
-    fortune_wheel_text = 'Колесо Фортуны'  # Новый текст для кнопки Колеса Фортуны
+    fortune_wheel_text = 'Колесо Фортуны'
     exit_text = 'Выход'
     awards_text = "Награды"
     button_awards = font.render(awards_text, True, WHITE)
     play_button_normal = font.render(play_text, True, WHITE)
     shop_button_normal = font.render(shop_text, True, WHITE)
-    fortune_wheel_button_normal = font.render(fortune_wheel_text, True, WHITE)  # Кнопка Колеса Фортуны
+    fortune_wheel_button_normal = font.render(fortune_wheel_text, True, WHITE)
     exit_button_normal = font.render(exit_text, True, WHITE)
     font_large = pygame.font.Font(None, 80)
     play_button_hover = font_large.render(play_text, True, RED)
     shop_button_hover = font_large.render(shop_text, True, RED)
-    fortune_wheel_button_hover = font_large.render(fortune_wheel_text, True, RED)  # Кнопка Колеса Фортуны
+    fortune_wheel_button_hover = font_large.render(fortune_wheel_text, True, RED)
     exit_button_hover = font_large.render(exit_text, True, RED)
     awards_button_hover = font_large.render(awards_text, True, RED)
-    play_button_rect = play_button_normal.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2 - 200))  # Сдвигаем все кнопки вниз
+    play_button_rect = play_button_normal.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2 - 200))
     shop_button_rect = shop_button_normal.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2 - 125))
-    fortune_wheel_button_rect = fortune_wheel_button_normal.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2 + 25))  # Добавляем позицию для новой кнопки
+    fortune_wheel_button_rect = fortune_wheel_button_normal.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2 + 25))
     awards_button_rect = button_awards.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2 - 50))
     exit_button_rect = exit_button_normal.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2 + 100))
     play_button_hover_rect = play_button_hover.get_rect(center=play_button_rect.center)
     shop_button_hover_rect = shop_button_hover.get_rect(center=shop_button_rect.center)
-    fortune_wheel_button_hover_rect = fortune_wheel_button_hover.get_rect(center=fortune_wheel_button_rect.center)  # Добавляем новую кнопку
+    fortune_wheel_button_hover_rect = fortune_wheel_button_hover.get_rect(center=fortune_wheel_button_rect.center)
     awards_button_hover_rect = awards_button_hover.get_rect(center=awards_button_rect.center)
     exit_button_hover_rect = exit_button_hover.get_rect(center=exit_button_rect.center)
     mouse_pos = pygame.mouse.get_pos()

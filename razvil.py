@@ -6,6 +6,7 @@ def razvil():
     pygame.init()
     size = 800, 950
     screen = pygame.display.set_mode(size)
+    pygame.display.set_caption("Ретро-Гонки")
     background = pygame.image.load("image/fon.png")
     font_text = pygame.font.Font(None, 85)
     font_big = pygame.font.Font(None, 80)
@@ -52,8 +53,10 @@ def razvil():
                     scene.menu()
         if button_shash_rect.collidepoint(mouse_pos):
             button_shash = font_big.render(text_shash, True, (255, 0, 0))
+            button_shash_rect = button_shash.get_rect(center=button_shash_rect.center)
         else:
             button_shash = font.render(text_shash, True, (255, 255, 255))
+            button_shash_rect = button_shash.get_rect(center=button_shash_rect.center)
         if exit_button_rect.collidepoint(mouse_pos):
             font_exit = pygame.font.Font(None, 85)
             exit_button = font_exit.render(exit_text, True, (255, 0, 0))

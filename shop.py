@@ -35,8 +35,8 @@ def shop():
         count_two_sprite = 0
         count_three_sprite = 0
         count_four_sprite = 0
-        cursor_sprites.execute("INSERT INTO sprites (id, count_one_sprite, count_two_sprite, count_three_sprite) VALUES (1, ?, ?, ?)",
-                               (count_one_sprite, count_two_sprite, count_three_sprite))
+        cursor_sprites.execute("INSERT INTO sprites (id, count_one_sprite, count_two_sprite, count_three_sprite, count_four_sprite) VALUES (1, ?, ?, ?, ?)",
+                               (count_one_sprite, count_two_sprite, count_three_sprite, count_four_sprite))
         conn_sprites.commit()
     else:
         count_one_sprite = row[1]
@@ -69,7 +69,7 @@ def shop():
     baza_car_image = pygame.transform.scale(baza_car_image, new_size)
     text2 = "Выбрано"
     baza_sprite = font.render(text2, True, (255, 255, 255))
-    baza_sprite_rect = one_sprite.get_rect(center=(600, 400))
+    baza_sprite_rect = one_sprite.get_rect(center=(565, 400))
     text3 = "Купить за 50"
     two_sprite_car = font.render(text3, True, (255, 255, 255))
     two_sprite_car_rect = two_sprite_car.get_rect(center=(925, 400))
@@ -218,30 +218,42 @@ def shop():
                 four_sprite_car = font.render(text5, True, (255, 255, 255))
             if baza_sprite_rect.collidepoint(mouse_pos):
                 baza_sprite = fontbig.render(text2, True, (255, 0, 0))
+                baza_sprite_rect = baza_sprite.get_rect(center=baza_sprite_rect.center)
             else:
                 baza_sprite = font.render(text2, True, (255, 255, 255))
+                baza_sprite_rect = baza_sprite.get_rect(center=baza_sprite_rect.center)
             if two_sprite_car_rect.collidepoint(mouse_pos):
                 two_sprite_car = fontbig.render(text3, True, (255, 0, 0))
+                two_sprite_car_rect = two_sprite_car.get_rect(center=two_sprite_car_rect.center)
             else:
                 two_sprite_car = font.render(text3, True, (255, 255, 255))
+                two_sprite_car_rect = two_sprite_car.get_rect(center=two_sprite_car_rect.center)
             if one_sprite_rect.collidepoint(mouse_pos):
                 fon = pygame.font.Font(None, 60)
                 one_sprite = fon.render(text1, True, (255, 0, 0))
+                one_sprite_rect = one_sprite.get_rect(center=one_sprite_rect.center)
             else:
                 one_sprite = font.render(text1, True, (255, 255, 255))
+                one_sprite_rect = one_sprite.get_rect(center=one_sprite_rect.center)
             if three_sprite_car_rect.collidepoint(mouse_pos):
                 three_sprite_car = fontbig.render(text4, True, (255, 0, 0))
+                three_sprite_car_rect = three_sprite_car.get_rect(center=three_sprite_car_rect.center)
             else:
                 three_sprite_car = font.render(text4, True, (255, 255, 255))
+                three_sprite_car_rect = three_sprite_car.get_rect(center=three_sprite_car_rect.center)
             if four_sprite_car_rect.collidepoint(mouse_pos):
                 four_sprite_car = fontbig.render(text5, True, (255, 0, 0))
+                four_sprite_car_rect = four_sprite_car.get_rect(center=four_sprite_car_rect.center)
             else:
                 four_sprite_car = font.render(text5, True, (255, 255, 255))
+                four_sprite_car_rect = four_sprite_car.get_rect(center=four_sprite_car_rect.center)
             if exit_button_rect.collidepoint(mouse_pos):
                 fonexit = pygame.font.Font(None, 80)
                 exit_button = fonexit.render(text_exit_button, True, (255, 0, 0))
+                exit_button_rect = exit_button.get_rect(center=exit_button_rect.center)
             else:
                 exit_button = font_money.render(text_exit_button, True, (255, 255, 255))
+                exit_button_rect = exit_button.get_rect(center=exit_button_rect.center)
         screen.blit(background, (0, 0))
         screen.blit(one_sprite, one_sprite_rect)
         screen.blit(one_car_image, (100, 200))
@@ -254,7 +266,7 @@ def shop():
         screen.blit(three_car_image, (150, 600))
         screen.blit(two_car_image, (885, 200))
         screen.blit(baza_car_image, (515, 200))
-        screen.blit(text_money_surface, (1050, 50))
+        screen.blit(text_money_surface, (1000, 50))
         pygame.display.flip()
         clock.tick(60)
     pygame.quit()

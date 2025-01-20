@@ -10,6 +10,7 @@ pygame.display.set_caption("Ретро-Гонки")
 def park2():
     size = width, height = 800, 960
     screen = pygame.display.set_mode(size)
+    pygame.display.set_caption("Ретро-Гонки")
     fence_color = (150, 75, 0)
     car_x = 50
     car_y = 50

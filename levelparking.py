@@ -5,6 +5,7 @@ import sqlite3
 def level_menu():
     pygame.init()
     clock = pygame.time.Clock()
+    pygame.display.set_caption("Ретро-Гонки")
     size = 800, 950
     screen = pygame.display.set_mode(size)
     background = pygame.image.load("image/fon.png")
@@ -84,30 +85,46 @@ def level_menu():
                     from levelfive import park5
                     scene = park5()
                     scene.park5()
+                if exit_level_rect.collidepoint(event.pos):
+                    from razvil import razvil
+                    scene = razvil()
+                    scene.razvil()
             if one_level_rect.collidepoint(mouse_pos):
                 one_level = font_big.render(text1, True, (255, 0, 0))
+                one_level_rect = one_level.get_rect(center=one_level_rect.center)
             else:
                 one_level = font.render(text1, True, (255, 255, 255))
+                one_level_rect = one_level.get_rect(center=one_level_rect.center)
             if two_level_rect.collidepoint(mouse_pos):
                 two_level = font_big.render(text2, True, (255, 0, 0))
+                two_level_rect = two_level.get_rect(center=two_level_rect.center)
             else:
                 two_level = font.render(text2, True, (255, 255, 255))
+                two_level_rect = two_level.get_rect(center=two_level_rect.center)
             if three_level_rect.collidepoint(mouse_pos):
                 three_level = font_big.render(text3, True, (255, 0, 0))
+                three_level_rect = three_level.get_rect(center=three_level_rect.center)
             else:
                 three_level = font.render(text3, True, (255, 255, 255))
+                three_level_rect = three_level.get_rect(center=three_level_rect.center)
             if four_level_rect.collidepoint(mouse_pos):
                 four_level = font_big.render(text4, True, (255, 0, 0))
+                four_level_rect = four_level.get_rect(center=four_level_rect.center)
             else:
                 four_level = font.render(text4, True, (255, 255, 255))
+                four_level_rect = four_level.get_rect(center=four_level_rect.center)
             if five_level_rect.collidepoint(mouse_pos):
                 five_level = font_big.render(text5, True, (255, 0, 0))
+                five_level_rect = five_level.get_rect(center=five_level_rect.center)
             else:
                 five_level = font.render(text5, True, (255, 255, 255))
+                five_level_rect = five_level.get_rect(center=five_level_rect.center)
             if exit_level_rect.collidepoint(mouse_pos):
                 exit_level = font_menu_plus.render(text_exit, True, (255, 0, 0))
+                exit_level_rect = exit_level.get_rect(center=exit_level_rect.center)
             else:
                 exit_level = font_menu.render(text_exit, True, (255, 255, 255))
+                exit_level_rect = exit_level.get_rect(center=exit_level_rect.center)
         screen.blit(background, (0, 0))
         screen.blit(one_level, one_level_rect)
         screen.blit(text_menu_render, text_menu_render_rect)

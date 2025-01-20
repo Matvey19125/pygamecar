@@ -218,7 +218,7 @@ def cycle():
     start_timer_awards = time.time()
     while running:
         current_time_awards = time.time()
-        if (current_time_awards - start_timer_awards) >= 2 and awards == False:
+        if (current_time_awards - start_timer_awards) >= 250  and awards == False:
             count_shashki = 1
             cursor_awards.execute(""" UPDATE awards_table SET count_shashki = ? WHERE id = 1 """, (count_shashki,))
             conn_awards.commit()

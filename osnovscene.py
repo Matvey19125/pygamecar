@@ -8,11 +8,14 @@ clock = pygame.time.Clock()
 TIMEREVENT = pygame.USEREVENT + 1
 timerpot = pygame.USEREVENT + 2
 SPEEDUP_TIMEREVENT = pygame.USEREVENT + 3
+tor_timer = pygame.USEREVENT + 1
 pygame.time.set_timer(timerpot, 1250)
 pygame.time.set_timer(SPEEDUP_TIMEREVENT, 500)
+pygame.time.set_timer(tor_timer, 1500)
 pygame.time.set_timer(TIMEREVENT, 15000)
 pygame.display.set_caption("Ретро-Гонки")
 count_stolk = 0
+sound_playing = False
 
 
 class Shoes:
@@ -55,7 +58,7 @@ class Shoes:
             self.cursor.execute("INSERT INTO money (id, chet_money) VALUES (1, 0)")
             self.conn.commit()
         self.active_streams = []
-        self.speed = 10
+        self.speed = 8
 
     def collider_money(self):
         self.money_y += self.speed
@@ -130,7 +133,7 @@ class Shoes:
         pygame.draw.rect(self.screen, self.colors[0], pygame.Rect(rect_x, rect_y, rect_width, rect_height))
         og = 1
         count = 0
-        for i in range(0, 75):
+        for i in range(0, 18):
             rect_x = 250
             rect_x2 = 515
             rect_width = 35
@@ -162,6 +165,11 @@ class Shoes:
         self.money_x = random.choice([115, 375, 615])
 
     def lose_scene(self):
+        count_stolk = 1
+        pygame.mixer.stop()
+        pygame.mixer.init()
+        crash_sound = pygame.mixer.Sound("audio/crash.mp3")
+        channel = crash_sound.play()
         running = True
         clock = pygame.time.Clock()
         manager = pygame_gui.UIManager((800, 600))
@@ -171,18 +179,24 @@ class Shoes:
         menu_exit = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((450, 450), (200, 150)),
                                                  text='Выход',
                                                  manager=manager)
+        sound_playing = True
         while running:
-            time_delta = clock.tick(60) / 1
+            time_delta = clock.tick(60) / 1000.0
             self.screen.fill((0, 0, 0))
             font = pygame.font.Font(None, 35)
             text = font.render("Вы врезались! Нажмите кнопку 'Заново' для перезагрузки", True, (255, 255, 255))
             text_rect = text.get_rect(center=(400, 250))
-            self.screen.blit(text, text_rect)
+
+            if not channel.get_busy():
+                sound_playing = False
+                self.screen.blit(text, text_rect)
+                manager.draw_ui(self.screen)
+
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     return
-                if event.type == pygame_gui.UI_BUTTON_PRESSED:
+                if not sound_playing and event.type == pygame_gui.UI_BUTTON_PRESSED:
                     if event.ui_element == restart_button:
                         self.__init__()
                         return
@@ -192,7 +206,6 @@ class Shoes:
                         scene.menu()
                 manager.process_events(event)
             manager.update(time_delta)
-            manager.draw_ui(self.screen)
             pygame.display.update()
 
 
@@ -216,9 +229,13 @@ def cycle():
     s_held_down = False
     awards = False
     start_timer_awards = time.time()
+    razgon = pygame.mixer.Sound("audio/razgon.mp3")
+    brake = pygame.mixer.Sound("audio/brake.mp3")
+    sound_playing = False
+    brake_playing = False
     while running:
         current_time_awards = time.time()
-        if (current_time_awards - start_timer_awards) >= 250  and awards == False:
+        if (current_time_awards - start_timer_awards) >= 250 and awards == False:
             count_shashki = 1
             cursor_awards.execute(""" UPDATE awards_table SET count_shashki = ? WHERE id = 1 """, (count_shashki,))
             conn_awards.commit()
@@ -246,19 +263,30 @@ def cycle():
         keys = pygame.key.get_pressed()
         if keys[pygame.K_w]:
             w_held_down = True
-            if shoes.speed < 40:
+            if not sound_playing and count_stolk != 1:
+                razgon.play(-1)
+                sound_playing = True
+            if shoes.speed < 30:
                 shoes.speed += 1
         else:
             w_held_down = False
-
+            if sound_playing:
+                razgon.stop()
+                sound_playing = False
         if keys[pygame.K_s]:
             s_held_down = True
+            if not brake_playing and count_stolk != 1:
+                brake.play(-1)
+                brake_playing = True
             if shoes.speed > 5:
                 shoes.speed -= 1
         else:
             s_held_down = False
+            if brake_playing:
+                brake.stop()
+                brake_playing = False
         if not w_held_down and not s_held_down:
-            shoes.speed = 10
+            shoes.speed = 8
         shoes.pot_dvish()
         shoes.save_money()
         shoes.collider_potok()

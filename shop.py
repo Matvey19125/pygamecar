@@ -97,6 +97,9 @@ def shop():
                 mouse_pos = pygame.mouse.get_pos()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if one_sprite_rect.collidepoint(event.pos) and money >= 100 and count_one_sprite == 0:
+                    pygame.mixer.init()
+                    sound = pygame.mixer.Sound("audio/nice.mp3")
+                    sound.play()
                     count_one_sprite = 1
                     text1 = "Выбрать"
                     one_sprite = font.render(text1, True, (255, 255, 255))
@@ -108,6 +111,9 @@ def shop():
                     conn_sprites.commit()
                     text_money_surface = font_money.render(text_money, True, (255, 255, 255))
                 elif two_sprite_car_rect.collidepoint(event.pos) and money >= 50 and count_two_sprite == 0:
+                    pygame.mixer.init()
+                    sound = pygame.mixer.Sound("audio/nice.mp3")
+                    sound.play()
                     count_two_sprite = 1
                     text3 = "Выбрать"
                     two_sprite_car = font.render(text3, True, (255, 255, 255))
@@ -119,6 +125,9 @@ def shop():
                     conn_sprites.commit()
                     text_money_surface = font_money.render(text_money, True, (255, 255, 255))
                 elif count_four_sprite == 0 and four_sprite_car_rect.collidepoint(event.pos) and money >= 75:
+                    pygame.mixer.init()
+                    sound = pygame.mixer.Sound("audio/nice.mp3")
+                    sound.play()
                     count_four_sprite = 1
                     text5 = "Выбрать"
                     four_sprite_car = font.render(text5, True, (255, 255, 255))
@@ -130,6 +139,9 @@ def shop():
                     conn_sprites.commit()
                     text_money_surface = font_money.render(text_money, True, (255, 255, 255))
                 elif three_sprite_car_rect.collidepoint(event.pos) and money >= 150 and count_three_sprite == 0:
+                    pygame.mixer.init()
+                    sound = pygame.mixer.Sound("audio/nice.mp3")
+                    sound.play()
                     count_three_sprite = 1
                     text4 = "Выбрать"
                     three_sprite_car = font.render(text4, True, (255, 255, 255))
@@ -153,12 +165,14 @@ def shop():
                     cursor_vibr.execute("UPDATE vibr SET count_vibr = ? WHERE id = 1", (count_vibr,))
                     conn_vibr.commit()
                 elif three_sprite_car_rect.collidepoint(event.pos) and count_three_sprite == 1:
+
                     text4 = "Выбрано"
                     three_sprite_car = font.render(text4, True, (255, 255, 255))
                     count_vibr = 3
                     cursor_vibr.execute("UPDATE vibr SET count_vibr = ? WHERE id = 1", (count_vibr,))
                     conn_vibr.commit()
                 elif two_sprite_car_rect.collidepoint(event.pos) and count_two_sprite == 1:
+
                     text3 = "Выбрано"
                     two_sprite_car = font.render(text3, True, (255, 255, 255))
                     count_vibr = 2

@@ -60,7 +60,8 @@ def menu():
     awards_button_hover = font_large.render(awards_text, True, RED)
     play_button_rect = play_button_normal.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2 - 200))
     shop_button_rect = shop_button_normal.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2 - 125))
-    fortune_wheel_button_rect = fortune_wheel_button_normal.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2 + 25))
+    fortune_wheel_button_rect = fortune_wheel_button_normal.get_rect(
+        center=(screen.get_width() // 2, screen.get_height() // 2 + 25))
     awards_button_rect = button_awards.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2 - 50))
     exit_button_rect = exit_button_normal.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2 + 100))
     play_button_hover_rect = play_button_hover.get_rect(center=play_button_rect.center)
@@ -68,6 +69,20 @@ def menu():
     fortune_wheel_button_hover_rect = fortune_wheel_button_hover.get_rect(center=fortune_wheel_button_rect.center)
     awards_button_hover_rect = awards_button_hover.get_rect(center=awards_button_rect.center)
     exit_button_hover_rect = exit_button_hover.get_rect(center=exit_button_rect.center)
+    moving_image = pygame.image.load("image/one_car_image.png")
+    moving_image_rect = moving_image.get_rect(center=screen.get_rect().midbottom)
+    animation_speed = 5
+    animation_speed2 = 3
+    moving_image2 = pygame.image.load("image/two_car.png")
+    moving_image2 = pygame.transform.rotate(moving_image2, 180)
+    moving_image2_rect = moving_image2.get_rect(center=(screen.get_rect().midtop[0] - 100, screen.get_rect().midtop[1]))
+    moving_image3 = pygame.image.load("image/three_car.png")
+    moving_image3_rect = moving_image3.get_rect(center=(screen.get_rect().midbottom[0] - 200, screen.get_rect().midbottom[1]))
+    moving_image4 = pygame.image.load("image/four_car.png")
+    moving_image4 = pygame.transform.rotate(moving_image4, 180)
+    moving_image4_rect = moving_image4.get_rect(center=(screen.get_rect().midtop[0] + 100, screen.get_rect().midtop[1]))
+    moving_image5 = pygame.image.load("image/sprite_one.png")
+    moving_image5_rect = moving_image5.get_rect(center=(screen.get_rect().midbottom[0] + 200, screen.get_rect().midbottom[1]))
     mouse_pos = pygame.mouse.get_pos()
     clock = pygame.time.Clock()
     running = True
@@ -100,6 +115,22 @@ def menu():
                 elif exit_button_rect.collidepoint(event.pos):
                     pygame.quit()
                     sys.exit()
+        moving_image_rect.y -= animation_speed
+        moving_image2_rect.y += animation_speed2
+        moving_image3_rect.y -= 7
+        moving_image4_rect.y += 4
+        moving_image5_rect.y -= 9
+        if moving_image_rect.bottom < 0:
+            moving_image_rect.midbottom = screen.get_rect().midbottom
+        moving_image2_rect.y += animation_speed2
+        if moving_image2_rect.top > screen.get_rect().height:
+            moving_image2_rect.topleft = (screen.get_rect().midtop[0] - 100, 0)
+        if moving_image3_rect.bottom < 0:
+            moving_image3_rect.midbottom = (screen.get_rect().midbottom[0] - 200, screen.get_rect().midbottom[1])
+        if moving_image4_rect.top > screen.get_rect().height:
+            moving_image4_rect.topleft = (screen.get_rect().midtop[0] + 100, 0)
+        if moving_image5_rect.bottom < 0:
+            moving_image5_rect.midbottom = (screen.get_rect().midbottom[0] + 200, screen.get_rect().midbottom[1])
         if play_button_rect.collidepoint(mouse_pos):
             play_button_to_draw = play_button_hover
             play_button_rect_to_use = play_button_hover_rect
@@ -132,7 +163,13 @@ def menu():
         else:
             exit_button_to_draw = exit_button_normal
             exit_button_rect_to_use = exit_button_rect
+
         screen.blit(background, (0, 0))
+        screen.blit(moving_image2, moving_image2_rect)
+        screen.blit(moving_image, moving_image_rect)
+        screen.blit(moving_image3, moving_image3_rect)
+        screen.blit(moving_image4, moving_image4_rect)
+        screen.blit(moving_image5, moving_image5_rect)
         screen.blit(play_button_to_draw, play_button_rect_to_use)
         screen.blit(shop_button_to_draw, shop_button_rect_to_use)
         screen.blit(fortune_wheel_button_to_draw, fortune_wheel_button_rect_to_use)

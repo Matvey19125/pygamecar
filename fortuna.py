@@ -145,6 +145,7 @@ def fortuna():
         if not rotating and not result_shown and first_spin_completed:
             final_sector_index = int((current_angle % 360) // 60)
             final_color = sector_colors[final_sector_index]
+
             if final_color == (255, 0, 0):
                 money += 20
                 text_money = str(money)
@@ -152,14 +153,20 @@ def fortuna():
                 conn_money.commit()
                 text_money_sprite = font_money.render(text_money, True, (255, 255, 255))
                 show_win_timer = pygame.time.get_ticks()
+                pygame.mixer.init()
+                sound = pygame.mixer.Sound("audio/win.mp3")
+                sound.play()
                 print("Победа")
             elif final_color == (0, 255, 0):
                 print("Поражение")
                 show_lose_timer = pygame.time.get_ticks()
+                pygame.mixer.init()
+                sound = pygame.mixer.Sound("audio/lose.mp3")
+                sound.play()
             result_shown = True
         if show_win_timer > 0 and pygame.time.get_ticks() - show_win_timer <= 3000:
             screen.blit(win_text_sprite, win_text_sprite_rect)
-        if show_lose_timer > 0 and pygame.time.get_ticks() - show_lose_timer <= 3000:
+        if show_lose_timer > 0 and pygame.time.get_ticks() - show_lose_timer <= 4000:
             screen.blit(lose_text_sprite, lose_text_sprite_rect)
         pygame.display.flip()
         clock.tick(60)

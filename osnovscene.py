@@ -1,15 +1,14 @@
 import pygame
 import random
 import sqlite3
-import pygame_gui
-import time
+from time import time
 pygame.init()
 clock = pygame.time.Clock()
 TIMEREVENT = pygame.USEREVENT + 1
-timerpot = pygame.USEREVENT + 2
-SPEEDUP_TIMEREVENT = pygame.USEREVENT + 3
+SPEEDUP_TIMEREVENT = pygame.USEREVENT + 2
+timerpot = pygame.USEREVENT + 3
 tor_timer = pygame.USEREVENT + 1
-pygame.time.set_timer(timerpot, 1250)
+pygame.time.set_timer(timerpot, 1000)
 pygame.time.set_timer(SPEEDUP_TIMEREVENT, 500)
 pygame.time.set_timer(tor_timer, 1500)
 pygame.time.set_timer(TIMEREVENT, 15000)
@@ -32,6 +31,8 @@ class Shoes:
         self.conn = sqlite3.connect('vibr.db')
         self.cursor = self.conn.cursor()
         self.cursor.execute("SELECT count_vibr FROM vibr")
+        self.start_time = time()
+        self.last_updated_time = None
         result = self.cursor.fetchone()
         self.count_vibr = result[0]
         self.scrin_car = [('image/one_car_image.png'), ('image/sprite_one.png'), ('image/two_car.png'), ('image/three_car.png'), ('image/four_car.png')]
@@ -59,6 +60,8 @@ class Shoes:
             self.conn.commit()
         self.active_streams = []
         self.speed = 8
+        sound = pygame.mixer.Sound("audio/fon_music.mp3")
+        sound.play(loops=-1)
 
     def collider_money(self):
         self.money_y += self.speed
@@ -171,42 +174,72 @@ class Shoes:
         crash_sound = pygame.mixer.Sound("audio/crash.mp3")
         channel = crash_sound.play()
         running = True
+        font_button = pygame.font.Font(None, 60)
+        text_restart = "Заново"
+        text_menu = "В меню"
+        button_restart = font_button.render(text_restart, True, (255, 255, 255))
+        button_menu = font_button.render(text_menu, True, (255, 255, 255))
+        button_restart_rect = button_restart.get_rect(center=(200, 700))
+        button_menu_rect = button_menu.get_rect(center=(600, 700))
         clock = pygame.time.Clock()
-        manager = pygame_gui.UIManager((800, 600))
-        restart_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((150, 450), (200, 150)),
-                                                      text='Заново',
-                                                      manager=manager)
-        menu_exit = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((450, 450), (200, 150)),
-                                                 text='Выход',
-                                                 manager=manager)
         sound_playing = True
+        show_button = False
+        mouse_pos = pygame.mouse.get_pos()
         while running:
             time_delta = clock.tick(60) / 1000.0
             self.screen.fill((0, 0, 0))
             font = pygame.font.Font(None, 35)
             text = font.render("Вы врезались! Нажмите кнопку 'Заново' для перезагрузки", True, (255, 255, 255))
             text_rect = text.get_rect(center=(400, 250))
-
             if not channel.get_busy():
                 sound_playing = False
+                if not show_button:
+                    show_button = True
+            if show_button:
                 self.screen.blit(text, text_rect)
-                manager.draw_ui(self.screen)
-
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    return
-                if not sound_playing and event.type == pygame_gui.UI_BUTTON_PRESSED:
-                    if event.ui_element == restart_button:
-                        self.__init__()
+                self.screen.blit(button_restart, button_restart_rect)
+                self.screen.blit(button_menu, button_menu_rect)
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        pygame.quit()
                         return
-                    if event.ui_element == menu_exit:
-                        from Menu import menu
-                        scene = menu()
-                        scene.menu()
-                manager.process_events(event)
-            manager.update(time_delta)
+                    if event.type == pygame.MOUSEMOTION:
+                        mouse_pos = pygame.mouse.get_pos()
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        if button_restart_rect.collidepoint(event.pos):
+                            self.__init__()
+                            count_stolk = 0
+                            return
+                        if button_menu_rect.collidepoint(event.pos):
+                            from Menu import menu
+                            scene = menu()
+                            scene.menu()
+                if button_restart_rect.collidepoint(mouse_pos):
+                    font_button_big = pygame.font.Font(None, 75)
+                    button_restart = font_button_big.render(text_restart, True, (255, 0, 0))
+                    button_restart_rect = button_restart.get_rect(center=button_restart_rect.center)
+                else:
+                    button_restart = font_button.render(text_restart, True, (255, 255, 255))
+                    button_restart_rect = button_restart.get_rect(center=button_restart_rect.center)
+                if button_menu_rect.collidepoint(mouse_pos):
+                    font_button_big = pygame.font.Font(None, 75)
+                    button_menu = font_button_big.render(text_menu, True, (255, 0, 0))
+                    button_menu_rect = button_menu.get_rect(center=button_menu_rect.center)
+                else:
+                    button_menu = font_button.render(text_menu, True, (255, 255, 255))
+                    button_menu_rect = button_menu.get_rect(center=button_menu_rect.center)
             pygame.display.update()
+
+    def secundomer(self):
+        elapsed_time = int(time() - self.start_time)
+        minutes = elapsed_time // 60
+        seconds = elapsed_time % 60
+        formatted_time = f"{minutes:02d}:{seconds:02d}"
+        font = pygame.font.SysFont(None, 65)
+        text_surface = font.render(formatted_time, True, (255, 255, 255))
+        text_rect = text_surface.get_rect(center=(690, 75))
+        self.screen.blit(text_surface, text_rect)
+        pygame.display.update()
 
 
 def cycle():
@@ -228,14 +261,16 @@ def cycle():
     w_held_down = False
     s_held_down = False
     awards = False
-    start_timer_awards = time.time()
+    start_timer_awards = time()
     razgon = pygame.mixer.Sound("audio/razgon.mp3")
     brake = pygame.mixer.Sound("audio/brake.mp3")
     sound_playing = False
     brake_playing = False
+    speedup_interval = 1000
+    pygame.time.set_timer(SPEEDUP_TIMEREVENT, speedup_interval)
     while running:
-        current_time_awards = time.time()
-        if (current_time_awards - start_timer_awards) >= 250 and awards == False:
+        current_time_awards = time()
+        if (current_time_awards - start_timer_awards) >= 360 and awards == False:
             count_shashki = 1
             cursor_awards.execute(""" UPDATE awards_table SET count_shashki = ? WHERE id = 1 """, (count_shashki,))
             conn_awards.commit()
@@ -261,6 +296,18 @@ def cycle():
                 if not w_held_down:
                     shoes.potok()
         keys = pygame.key.get_pressed()
+        current_time = time()
+        elapsed_time = int(current_time - shoes.start_time)
+        minutes = elapsed_time // 60
+        seconds = elapsed_time % 60
+        if (minutes, seconds) != shoes.last_updated_time:
+            last_updated_time = (minutes, seconds)
+            shoes.screen.fill((0, 0, 0), rect=pygame.Rect(640, 50, 100, 80))
+            formatted_time = f"{minutes:02d}:{seconds:02d}"
+            font = pygame.font.SysFont(None, 65)
+            text_surface = font.render(formatted_time, True, (255, 255, 255))
+            text_rect = text_surface.get_rect(center=(690, 75))
+            shoes.screen.blit(text_surface, text_rect)
         if keys[pygame.K_w]:
             w_held_down = True
             if not sound_playing and count_stolk != 1:
@@ -278,6 +325,9 @@ def cycle():
             if not brake_playing and count_stolk != 1:
                 brake.play(-1)
                 brake_playing = True
+            if speedup_interval > 500:
+                speedup_interval -= 50
+                pygame.time.set_timer(SPEEDUP_TIMEREVENT, speedup_interval)
             if shoes.speed > 5:
                 shoes.speed -= 1
         else:
@@ -292,6 +342,7 @@ def cycle():
         shoes.collider_potok()
         shoes.money_chet()
         shoes.collider_money()
+        shoes.secundomer()
         shoes.draw()
     pygame.quit()
 

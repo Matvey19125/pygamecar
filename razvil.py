@@ -60,16 +60,22 @@ def razvil():
         if exit_button_rect.collidepoint(mouse_pos):
             font_exit = pygame.font.Font(None, 85)
             exit_button = font_exit.render(exit_text, True, (255, 0, 0))
+            exit_button_rect = exit_button.get_rect(center=exit_button_rect.center)
         else:
             exit_button = font_big.render(exit_text, True, (255, 255, 255))
+            exit_button_rect = exit_button.get_rect(center=exit_button_rect.center)
         if button_revers_rect.collidepoint(mouse_pos):
             button_revers = font_big.render(text_revers, True, (255, 0, 0))
+            button_revers_rect = button_revers.get_rect(center=button_revers_rect.center)
         else:
             button_revers = font.render(text_revers, True, (255, 255, 255))
+            button_revers_rect = button_revers.get_rect(center=button_revers_rect.center)
         if button_parcing_rect.collidepoint(mouse_pos):
             button_parcing = font_big.render(text_parcing, True, (255, 0, 0))
+            button_parcing_rect = button_parcing.get_rect(center=button_parcing_rect.center)
         else:
             button_parcing = font.render(text_parcing, True, (255, 255, 255))
+            button_parcing_rect = button_parcing.get_rect(center=button_parcing_rect.center)
         screen.blit(background, (0, 0))
         screen.blit(button_prom, (175, 150))
         screen.blit(button_revers, button_revers_rect)

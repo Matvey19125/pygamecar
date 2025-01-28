@@ -31,6 +31,9 @@ def awards():
     exit_text = "Выход"
     exit_button = font_big.render(exit_text, True, (255, 255, 255))
     exit_button_rect = exit_button.get_rect(center=(110, 50))
+    text_rules = "Как получить?"
+    rules_button = font_big.render(text_rules, True, (255, 255, 255))
+    rules_button_rect = rules_button.get_rect(center=(575, 50))
     background = pygame.transform.scale(background, (screen.get_width(), screen.get_height()))
     parking_image = pygame.image.load("image/pot_parking_awards.png")
     parking_image_rect = pygame.transform.scale(parking_image, (90, 90))
@@ -41,6 +44,7 @@ def awards():
     parking_awards_rect = pygame.transform.scale(parking_awards, (90, 90))
     shashki_awards = pygame.image.load("image/shahki awards.png")
     revers_awards = pygame.image.load("image/revers awards.png")
+    font_exit_big = pygame.font.Font(None, 85)
     mouse_pos = pygame.mouse.get_pos()
     running = True
     while running:
@@ -54,14 +58,23 @@ def awards():
                     from Menu import menu
                     scene = menu()
                     scene.menu()
+                if rules_button_rect.collidepoint(event.pos):
+                    from razvil_manual import manual
+                    scene = manual()
+                    scene.menu()
         screen.blit(background, (0, 0))
         if exit_button_rect.collidepoint(mouse_pos):
-            font_exit_big = pygame.font.Font(None, 85)
             exit_button = font_exit_big.render(exit_text, True, (255, 0, 0))
             exit_button_rect = exit_button.get_rect(center=exit_button_rect.center)
         else:
             exit_button = font_big.render(exit_text, True, (255, 255, 255))
             exit_button_rect = exit_button.get_rect(center=exit_button_rect.center)
+        if rules_button_rect.collidepoint(mouse_pos):
+            rules_button = font_exit_big.render(text_rules, True, (255, 0, 0))
+            rules_button_rect = rules_button.get_rect(center=rules_button_rect.center)
+        else:
+            rules_button = font_big.render(text_rules, True, (255, 255, 255))
+            rules_button_rect = rules_button.get_rect(center=rules_button_rect.center)
         if count_parking == 0:
             screen.blit(parking_image, (100, 600))
         else:
@@ -74,8 +87,9 @@ def awards():
             screen.blit(shashki_image, (285, 300))
         else:
             screen.blit(shashki_awards, (285, 300))
-        screen.blit(text_awards_rect, (225, 100))
+        screen.blit(text_awards_rect, (225, 150))
         screen.blit(exit_button, exit_button_rect)
+        screen.blit(rules_button, rules_button_rect)
         pygame.display.flip()
         clock.tick(60)
 

@@ -46,19 +46,24 @@ def awards():
     revers_awards = pygame.image.load("image/revers awards.png")
     font_exit_big = pygame.font.Font(None, 85)
     mouse_pos = pygame.mouse.get_pos()
+    sound = pygame.mixer.Sound("audio/awards.mp3")
+    sound.play(loops=-1)
     running = True
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
+                pygame.mixer.stop()
                 pygame.quit()
             if event.type == pygame.MOUSEMOTION:
                 mouse_pos = pygame.mouse.get_pos()
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if exit_button_rect.collidepoint(event.pos):
+                    pygame.mixer.stop()
                     from Menu import menu
                     scene = menu()
                     scene.menu()
                 if rules_button_rect.collidepoint(event.pos):
+                    pygame.mixer.stop()
                     from razvil_manual import manual
                     scene = manual()
                     scene.menu()

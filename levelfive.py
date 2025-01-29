@@ -100,10 +100,12 @@ def park5():
     nps_nine_sprite = pygame.image.load(nps_car[random.randrange(0, 6)])
     nps_nine_scaled = pygame.transform.scale(nps_nine_sprite, (car_width, car_height))
     nps_nine_collider = nps_nine_scaled.get_rect(topleft=(650, 450))
-
+    sound = pygame.mixer.Sound("audio/level5.mp3")
+    sound.play(loops=-1)
     running = True
 
     def lose():
+        pygame.mixer.stop()
         running1 = True
         clock = pygame.time.Clock()
         manager = pygame_gui.UIManager((800, 600))
@@ -179,6 +181,7 @@ def park5():
             parcing_collider.x = -100
             parcing_collider.y = -100
         if car_collider.colliderect(tochka_win_collider):
+            pygame.mixer.stop()
             running1 = True
             clock = pygame.time.Clock()
             manager = pygame_gui.UIManager((800, 600))

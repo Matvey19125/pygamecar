@@ -61,7 +61,7 @@ class Rervers:
             self.conn.commit()
         self.active_streams = []
         self.speed = 8
-        sound = pygame.mixer.Sound("audio/fon_music.mp3")
+        sound = pygame.mixer.Sound("audio/revers.mp3")
         sound.play(loops=-1)
         self.last_updated_time = None
 
@@ -276,7 +276,6 @@ def cycle():
             count_shashki = 1
             cursor_awards.execute(""" UPDATE awards_table SET count_shashki = ? WHERE id = 1 """, (count_shashki,))
             conn_awards.commit()
-            print(1)
             awards = True
         clock.tick(140)
         for event in pygame.event.get():

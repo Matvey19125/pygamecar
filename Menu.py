@@ -85,34 +85,43 @@ def menu():
     moving_image5_rect = moving_image5.get_rect(center=(screen.get_rect().midbottom[0] + 200, screen.get_rect().midbottom[1]))
     mouse_pos = pygame.mouse.get_pos()
     clock = pygame.time.Clock()
+    sound = pygame.mixer.Sound("audio/menu_fon.mp3")
+    sound.play(loops=-1)
     running = True
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
+                pygame.mixer.stop()
                 pygame.quit()
                 sys.exit()
             if event.type == pygame.MOUSEMOTION:
                 mouse_pos = pygame.mouse.get_pos()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
+                    pygame.mixer.stop()
                     pygame.quit()
                     sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if play_button_rect.collidepoint(event.pos):
+                    pygame.mixer.stop()
                     shoes_scene = razvil()
                     shoes_scene.razvil()
                     running = False
                 elif shop_button_rect.collidepoint(event.pos):
+                    pygame.mixer.stop()
                     scene = shop()
                     scene.shop()
                     running = True
                 elif fortune_wheel_button_rect.collidepoint(event.pos):
+                    pygame.mixer.stop()
                     scene = fortuna()
                     scene.fortuna()
                 elif awards_button_rect.collidepoint(event.pos):
+                    pygame.mixer.stop()
                     scene = awards()
                     scene.awards()
                 elif exit_button_rect.collidepoint(event.pos):
+                    pygame.mixer.stop()
                     pygame.quit()
                     sys.exit()
         moving_image_rect.y -= animation_speed

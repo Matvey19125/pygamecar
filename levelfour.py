@@ -7,11 +7,11 @@ pygame.init()
 clock = pygame.time.Clock()
 pygame.display.set_caption("Ретро-Гонки")
 
+
 def park4():
     size = width, height = 800, 960
     screen = pygame.display.set_mode(size)
     fence_color = (150, 75, 0)
-
     car_x = 50
     car_y = 50
     car_width = 100
@@ -103,10 +103,11 @@ def park4():
     nps_ten_sprite = pygame.image.load(nps_car[random.randrange(0, 6)])
     nps_ten_scaled = pygame.transform.scale(nps_ten_sprite, (car_width, car_height))
     nps_ten_collider = nps_ten_scaled.get_rect(topleft=(440, 400))
-
+    sound = pygame.mixer.Sound("audio/level4.mp3")
+    sound.play(loops=-1)
     running = True
-
     def lose():
+        pygame.mixer.stop()
         running1 = True
         clock = pygame.time.Clock()
         manager = pygame_gui.UIManager((800, 600))
@@ -143,6 +144,7 @@ def park4():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+                pygame.mixer.stop()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_d and car_x + car_width < width - 20:
                     car_angle = 270
@@ -176,6 +178,7 @@ def park4():
             parcing_collider.x = -100
             parcing_collider.y = -100
         if car_collider.colliderect(tochka_win_collider):
+            pygame.mixer.stop()
             money += 15
             cursor_money.execute("UPDATE money SET chet_money = ? WHERE id = 1", (money,))
             conn_money.commit()

@@ -101,8 +101,11 @@ def park3():
     nps_nine_sprite = pygame.image.load(nps_car[random.randrange(0, 6)])
     nps_nine_scaled = pygame.transform.scale(nps_nine_sprite, (car_width, car_height))
     nps_nine_collider = nps_nine_scaled.get_rect(topleft=(300, 550))
+    sound = pygame.mixer.Sound("audio/level3.mp3")
+    sound.play(loops=-1)
     running = True
     def lose():
+        pygame.mixer.stop()
         running1 = True
         clock = pygame.time.Clock()
         manager = pygame_gui.UIManager((800, 600))
@@ -139,6 +142,7 @@ def park3():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+                pygame.mixer.stop()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_d and car_x + car_width < width - 20:
                     car_angle = 270
@@ -173,6 +177,7 @@ def park3():
             parcing_collider.x = -100
             parcing_collider.y = -100
         if car_collider.colliderect(tochka_win_collider):
+            pygame.mixer.stop()
             money += 15
             cursor_money.execute("UPDATE money SET chet_money = ? WHERE id = 1", (money,))
             conn_money.commit()
@@ -198,8 +203,8 @@ def park3():
                         return
                     if event.type == pygame_gui.UI_BUTTON_PRESSED:
                         if event.ui_element == restart_button:
-                            count_two_level = 1
-                            cursor_car.execute(""" UPDATE leveltable SET two = ? WHERE id = 1 """, (count_two_level,))
+                            count_four_level = 1
+                            cursor_car.execute(""" UPDATE leveltable SET four = ? WHERE id = 1 """, (count_four_level,))
                             conn_car.commit()
                             scene = park4()
                             scene.park4()

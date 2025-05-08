@@ -117,7 +117,7 @@ def shop():
                     count_two_sprite = 1
                     text3 = "Выбрать"
                     two_sprite_car = font.render(text3, True, (255, 255, 255))
-                    money -= 100
+                    money -= 50
                     text_money = str(money)
                     cursor_money.execute("UPDATE money SET chet_money = ? WHERE id = 1", (text_money,))
                     conn_money.commit()

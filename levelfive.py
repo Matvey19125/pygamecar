@@ -106,38 +106,67 @@ def park5():
 
     def lose():
         pygame.mixer.stop()
+        pygame.mixer.init()
+        crash_sound = pygame.mixer.Sound("audio/crash.mp3")
+        channel = crash_sound.play()
         running1 = True
+        font_button = pygame.font.Font(None, 60)
+        text_restart = "Заново"
+        text_menu = "В меню"
+        button_restart = font_button.render(text_restart, True, (255, 255, 255))
+        button_menu = font_button.render(text_menu, True, (255, 255, 255))
+        button_restart_rect = button_restart.get_rect(center=(200, 700))
+        button_menu_rect = button_menu.get_rect(center=(600, 700))
         clock = pygame.time.Clock()
-        manager = pygame_gui.UIManager((800, 600))
-        restart_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((150, 450), (200, 150)),
-                                                      text='Заново',
-                                                      manager=manager)
-        menu_exit = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((450, 450), (200, 150)),
-                                                 text='Выход',
-                                                 manager=manager)
+        sound_playing = True
+        show_button = False
+        mouse_pos = pygame.mouse.get_pos()
         while running1:
             time_delta = clock.tick(60) / 1000.0
             screen.fill((0, 0, 0))
             font = pygame.font.Font(None, 35)
             text = font.render("Вы врезались! Нажмите кнопку 'Заново' для перезагрузки", True, (255, 255, 255))
             text_rect = text.get_rect(center=(400, 250))
-            screen.blit(text, text_rect)
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    return
-                if event.type == pygame_gui.UI_BUTTON_PRESSED:
-                    if event.ui_element == restart_button:
-                        park5()
+            if not channel.get_busy():
+                sound_playing = False
+                if not show_button:
+                    show_button = True
+            if show_button:
+                screen.blit(text, text_rect)
+                screen.blit(button_restart, button_restart_rect)
+                screen.blit(button_menu, button_menu_rect)
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        pygame.quit()
                         return
-                    if event.ui_element == menu_exit:
-                        from Menu import menu
-                        scene = menu()
-                        scene.menu()
-                manager.process_events(event)
-            manager.update(time_delta)
-            manager.draw_ui(screen)
+                    if event.type == pygame.MOUSEMOTION:
+                        mouse_pos = pygame.mouse.get_pos()
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        if button_restart_rect.collidepoint(event.pos):
+                            park5()
+                            return
+                        if button_menu_rect.collidepoint(event.pos):
+                            from Menu import menu
+                            scene = menu()
+                            scene.menu()
+                            return
+                if button_restart_rect.collidepoint(mouse_pos):
+                    font_button_big = pygame.font.Font(None, 75)
+                    button_restart = font_button_big.render(text_restart, True, (255, 0, 0))
+                    button_restart_rect = button_restart.get_rect(center=button_restart_rect.center)
+                else:
+                    button_restart = font_button.render(text_restart, True, (255, 255, 255))
+                    button_restart_rect = button_restart.get_rect(center=button_restart_rect.center)
+
+                if button_menu_rect.collidepoint(mouse_pos):
+                    font_button_big = pygame.font.Font(None, 75)
+                    button_menu = font_button_big.render(text_menu, True, (255, 0, 0))
+                    button_menu_rect = button_menu.get_rect(center=button_menu_rect.center)
+                else:
+                    button_menu = font_button.render(text_menu, True, (255, 255, 255))
+                    button_menu_rect = button_menu.get_rect(center=button_menu_rect.center)
             pygame.display.update()
+
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -184,26 +213,29 @@ def park5():
             pygame.mixer.stop()
             running1 = True
             clock = pygame.time.Clock()
-            manager = pygame_gui.UIManager((800, 600))
-            restart_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((150, 450), (200, 150)),
-                                                          text='Далее',
-                                                          manager=manager)
-            menu_exit = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((450, 450), (200, 150)),
-                                                     text='Выход',
-                                                     manager=manager)
+            font_button = pygame.font.Font(None, 60)
+            text_restart = "Далее"
+            text_menu = "В меню"
+            button_restart = font_button.render(text_restart, True, (255, 255, 255))
+            button_menu = font_button.render(text_menu, True, (255, 255, 255))
+            button_restart_rect = button_restart.get_rect(center=(200, 700))
+            button_menu_rect = button_menu.get_rect(center=(600, 700))
             while running1:
+                mouse_pos = pygame.mouse.get_pos()
                 time_delta = clock.tick(60) / 1000.0
                 screen.fill((0, 0, 0))
                 font = pygame.font.Font(None, 35)
                 text = font.render("Поздравляем! Вы прошли уровень!", True, (255, 255, 255))
                 text_rect = text.get_rect(center=(400, 250))
                 screen.blit(text, text_rect)
+                screen.blit(button_restart, button_restart_rect)
+                screen.blit(button_menu, button_menu_rect)
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
                         pygame.quit()
                         return
-                    if event.type == pygame_gui.UI_BUTTON_PRESSED:
-                        if event.ui_element == restart_button:
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        if button_restart_rect.collidepoint(event.pos):
                             count_parking = 1
                             cursor_awards.execute(""" UPDATE awards_table SET count_parking = ? WHERE id = 1 """,
                                                   (count_parking,))
@@ -211,16 +243,31 @@ def park5():
                             from awards import awards
                             scene = awards()
                             scene.awards()
-                        if event.ui_element == menu_exit:
+                            return
+                        if button_menu_rect.collidepoint(event.pos):
                             count_parking = 1
                             cursor_awards.execute(""" UPDATE awards_table SET count_parking = ? WHERE id = 1 """, (count_parking,))
                             conn_awards.commit()
                             from Menu import menu
                             scene = menu()
                             scene.menu()
-                    manager.process_events(event)
-                manager.update(time_delta)
-                manager.draw_ui(screen)
+                            return
+                if button_restart_rect.collidepoint(mouse_pos):
+                    font_button_big = pygame.font.Font(None, 75)
+                    button_restart = font_button_big.render(text_restart, True, (255, 0, 0))
+                    button_restart_rect = button_restart.get_rect(center=button_restart_rect.center)
+                else:
+                    button_restart = font_button.render(text_restart, True, (255, 255, 255))
+                    button_restart_rect = button_restart.get_rect(center=button_restart_rect.center)
+
+                if button_menu_rect.collidepoint(mouse_pos):
+                    font_button_big = pygame.font.Font(None, 75)
+                    button_menu = font_button_big.render(text_menu, True, (255, 0, 0))
+                    button_menu_rect = button_menu.get_rect(center=button_menu_rect.center)
+                else:
+                    button_menu = font_button.render(text_menu, True, (255, 255, 255))
+                    button_menu_rect = button_menu.get_rect(center=button_menu_rect.center)
+
                 pygame.display.update()
         text = str(money)
         text_money_surface = font.render(text, True, (255, 255, 255))

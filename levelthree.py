@@ -3,12 +3,15 @@ import random
 import sqlite3
 import pygame_gui
 from levelfour import park4
+
 pygame.init()
 clock = pygame.time.Clock()
 pygame.display.set_caption("Ретро-Гонки")
 
 
 def park3():
+    WHITE = (255, 255, 255)
+    RED = (255, 50, 0)
     size = width, height = 800, 960
     pygame.display.set_caption("Ретро-Гонки")
     screen = pygame.display.set_mode(size)
@@ -72,7 +75,8 @@ def park3():
     parcing_scaled = pygame.transform.scale(parcing_image, (60, 90))
     parcing_scaled = pygame.transform.rotate(parcing_scaled, 90)
     parcing_collider = pygame.Rect(335, 460, 80, 80)
-    nps_car = ['image/potok_car1.png', 'image/potok_car2.png', 'image/potok_car3.png', 'image/potok_car4.png', 'image/potok_car5.png', 'image/potok_car6.png']
+    nps_car = ['image/potok_car1.png', 'image/potok_car2.png', 'image/potok_car3.png', 'image/potok_car4.png',
+               'image/potok_car5.png', 'image/potok_car6.png']
     nps_one_sprite = pygame.image.load(nps_car[random.randrange(0, 6)])
     nps_one_scaled = pygame.transform.scale(nps_one_sprite, (car_width, car_height))
     nps_one_collider = nps_one_scaled.get_rect(topleft=(400, 300))
@@ -104,40 +108,70 @@ def park3():
     sound = pygame.mixer.Sound("audio/level3.mp3")
     sound.play(loops=-1)
     running = True
+
     def lose():
         pygame.mixer.stop()
+        pygame.mixer.init()
+        crash_sound = pygame.mixer.Sound("audio/crash.mp3")
+        channel = crash_sound.play()
         running1 = True
+        font_button = pygame.font.Font(None, 60)
+        text_restart = "Заново"
+        text_menu = "В меню"
+        button_restart = font_button.render(text_restart, True, (255, 255, 255))
+        button_menu = font_button.render(text_menu, True, (255, 255, 255))
+        button_restart_rect = button_restart.get_rect(center=(200, 700))
+        button_menu_rect = button_menu.get_rect(center=(600, 700))
         clock = pygame.time.Clock()
-        manager = pygame_gui.UIManager((800, 600))
-        restart_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((150, 450), (200, 150)),
-                                                      text='Заново',
-                                                      manager=manager)
-        menu_exit = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((450, 450), (200, 150)),
-                                                 text='Выход',
-                                                 manager=manager)
+        sound_playing = True
+        show_button = False
+        mouse_pos = pygame.mouse.get_pos()
         while running1:
             time_delta = clock.tick(60) / 1000.0
             screen.fill((0, 0, 0))
             font = pygame.font.Font(None, 35)
             text = font.render("Вы врезались! Нажмите кнопку 'Заново' для перезагрузки", True, (255, 255, 255))
             text_rect = text.get_rect(center=(400, 250))
-            screen.blit(text, text_rect)
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    return
-                if event.type == pygame_gui.UI_BUTTON_PRESSED:
-                    if event.ui_element == restart_button:
-                        park3()
+            if not channel.get_busy():
+                sound_playing = False
+                if not show_button:
+                    show_button = True
+            if show_button:
+                screen.blit(text, text_rect)
+                screen.blit(button_restart, button_restart_rect)
+                screen.blit(button_menu, button_menu_rect)
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        pygame.quit()
                         return
-                    if event.ui_element == menu_exit:
-                        from Menu import menu
-                        scene = menu()
-                        scene.menu()
-                manager.process_events(event)
-            manager.update(time_delta)
-            manager.draw_ui(screen)
+                    if event.type == pygame.MOUSEMOTION:
+                        mouse_pos = pygame.mouse.get_pos()
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        if button_restart_rect.collidepoint(event.pos):
+                            park3()
+                            return
+                        if button_menu_rect.collidepoint(event.pos):
+                            from Menu import menu
+                            scene = menu()
+                            scene.menu()
+                            return
+                if button_restart_rect.collidepoint(mouse_pos):
+                    font_button_big = pygame.font.Font(None, 75)
+                    button_restart = font_button_big.render(text_restart, True, (255, 0, 0))
+                    button_restart_rect = button_restart.get_rect(center=button_restart_rect.center)
+                else:
+                    button_restart = font_button.render(text_restart, True, (255, 255, 255))
+                    button_restart_rect = button_restart.get_rect(center=button_restart_rect.center)
+
+                if button_menu_rect.collidepoint(mouse_pos):
+                    font_button_big = pygame.font.Font(None, 75)
+                    button_menu = font_button_big.render(text_menu, True, (255, 0, 0))
+                    button_menu_rect = button_menu.get_rect(center=button_menu_rect.center)
+                else:
+                    button_menu = font_button.render(text_menu, True, (255, 255, 255))
+                    button_menu_rect = button_menu.get_rect(center=button_menu_rect.center)
             pygame.display.update()
+
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -162,9 +196,13 @@ def park3():
                     car_collider.y = car_y
         rotated_sprite = pygame.transform.rotate(scaled_sprite, car_angle)
         car_collider = rotated_sprite.get_rect(topleft=(car_x, car_y))
-        if car_collider.colliderect(nps_one_collider) or car_collider.colliderect(nps_two_collider) or car_collider.colliderect(nps_three_collider) or car_collider.colliderect(nps_four_collider):
+        if car_collider.colliderect(nps_one_collider) or car_collider.colliderect(
+                nps_two_collider) or car_collider.colliderect(nps_three_collider) or car_collider.colliderect(
+                nps_four_collider):
             lose()
-        if car_collider.colliderect(nps_five_collider) or car_collider.colliderect(nps_six_collider) or car_collider.colliderect(nps_seven_collider) or car_collider.colliderect(nps_eith_collider) or car_collider.colliderect(nps_nine_collider):
+        if car_collider.colliderect(nps_five_collider) or car_collider.colliderect(
+                nps_six_collider) or car_collider.colliderect(nps_seven_collider) or car_collider.colliderect(
+                nps_eith_collider) or car_collider.colliderect(nps_nine_collider):
             lose()
         if money_collider.x >= 0 and money_collider.y >= 0:
             if car_collider.colliderect(money_collider):
@@ -183,38 +221,56 @@ def park3():
             conn_money.commit()
             running1 = True
             clock = pygame.time.Clock()
-            manager = pygame_gui.UIManager((800, 600))
-            restart_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((150, 450), (200, 150)),
-                                                          text='Далее',
-                                                          manager=manager)
-            menu_exit = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((450, 450), (200, 150)),
-                                                     text='Выход',
-                                                     manager=manager)
+            font_button = pygame.font.Font(None, 60)
+            text_restart = "Далее"
+            text_menu = "В меню"
+            button_restart = font_button.render(text_restart, True, (255, 255, 255))
+            button_menu = font_button.render(text_menu, True, (255, 255, 255))
+            button_restart_rect = button_restart.get_rect(center=(200, 700))
+            button_menu_rect = button_menu.get_rect(center=(600, 700))
             while running1:
+                mouse_pos = pygame.mouse.get_pos()
                 time_delta = clock.tick(60) / 1000.0
                 screen.fill((0, 0, 0))
                 font = pygame.font.Font(None, 35)
                 text = font.render("Поздравляем! Вы прошли уровень!", True, (255, 255, 255))
                 text_rect = text.get_rect(center=(400, 250))
                 screen.blit(text, text_rect)
+                screen.blit(button_restart, button_restart_rect)
+                screen.blit(button_menu, button_menu_rect)
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
                         pygame.quit()
                         return
-                    if event.type == pygame_gui.UI_BUTTON_PRESSED:
-                        if event.ui_element == restart_button:
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        if button_restart_rect.collidepoint(event.pos):
                             count_four_level = 1
                             cursor_car.execute(""" UPDATE leveltable SET four = ? WHERE id = 1 """, (count_four_level,))
                             conn_car.commit()
                             scene = park4()
                             scene.park4()
-                        if event.ui_element == menu_exit:
+                            return
+                        if button_menu_rect.collidepoint(event.pos):
                             from Menu import menu
                             scene = menu()
                             scene.menu()
-                    manager.process_events(event)
-                manager.update(time_delta)
-                manager.draw_ui(screen)
+                            return
+                if button_restart_rect.collidepoint(mouse_pos):
+                    font_button_big = pygame.font.Font(None, 75)
+                    button_restart = font_button_big.render(text_restart, True, (255, 0, 0))
+                    button_restart_rect = button_restart.get_rect(center=button_restart_rect.center)
+                else:
+                    button_restart = font_button.render(text_restart, True, (255, 255, 255))
+                    button_restart_rect = button_restart.get_rect(center=button_restart_rect.center)
+
+                if button_menu_rect.collidepoint(mouse_pos):
+                    font_button_big = pygame.font.Font(None, 75)
+                    button_menu = font_button_big.render(text_menu, True, (255, 0, 0))
+                    button_menu_rect = button_menu.get_rect(center=button_menu_rect.center)
+                else:
+                    button_menu = font_button.render(text_menu, True, (255, 255, 255))
+                    button_menu_rect = button_menu.get_rect(center=button_menu_rect.center)
+
                 pygame.display.update()
         text = str(money)
         text_money_surface = font.render(text, True, (255, 255, 255))
@@ -245,5 +301,7 @@ def park3():
         screen.blit(text_money_surface, (20, 20))
         pygame.display.flip()
     pygame.quit()
+
+
 if __name__ == "__main__":
     park3()
